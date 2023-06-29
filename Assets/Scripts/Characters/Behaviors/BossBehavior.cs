@@ -87,7 +87,7 @@ public class BossBehavior : CharacterBehaviour {
 			this.ApplyAttackDamage();
 		}
 
-		StartCoroutine(this.ResetAttack());
+		_ = this.StartCoroutine(this.ResetAttack());
 	}
 
 	/// <summary>
@@ -157,16 +157,15 @@ public class BossBehavior : CharacterBehaviour {
 	/// <summary>
 	/// Starts the auto-attack coroutine.
 	/// </summary>
-	private void StartAutoAttack() {
-		this._autoAttackCoroutine ??= StartCoroutine(this.AutoAttack());
-	}
+	private void StartAutoAttack()
+		=> this._autoAttackCoroutine ??= this.StartCoroutine(this.AutoAttack());
 
 	/// <summary>
 	/// Stops the auto-attack coroutine.
 	/// </summary>
 	private void StopAutoAttack() {
 		if (this._autoAttackCoroutine != null) {
-			StopCoroutine(this._autoAttackCoroutine);
+			this.StopCoroutine(this._autoAttackCoroutine);
 			this._autoAttackCoroutine = null;
 		}
 	}
