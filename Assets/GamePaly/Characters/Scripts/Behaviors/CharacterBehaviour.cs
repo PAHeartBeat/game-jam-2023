@@ -5,9 +5,20 @@ using UnityEngine;
 /// </summary>
 public abstract class CharacterBehaviour : MonoBehaviour {
 #pragma warning disable IDE0044 // Make Field Read-only
-	[SerializeField] protected Animator animator; // Animation System for Boss/character
-	[SerializeField] protected string dieAnimation = "Die"; // Animation state name for Character die.
-	[SerializeField] protected string idleAnimation = "Idle"; // Animation state name for Character idle.
+	// Animation System for Boss/character
+	[Header("Common Behaviour for all kind of Characters")]
+	[SerializeField] protected Animator animator;
+
+	// Animation state name for Character die.
+	[SerializeField] protected string dieAnimation = "Die";
+
+	// Animation state name for Character idle.
+	[SerializeField] protected string idleAnimation = "Idle";
+
+	/// <summary>
+	/// Indicates whether the attack can cause damage. This flag avoids double damage from animation.
+	/// </summary>
+	[SerializeField] protected bool canApplyDamage = false;
 #pragma warning restore IDE0044 // Make Field Read-only
 
 	/// <summary>

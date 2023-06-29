@@ -4,7 +4,7 @@ using UnityEngine;
 
 public abstract class CharacterController : CharacterBehaviour, ICharacterController {
 #pragma warning disable IDE0044 // Make field readonly
-	[Header("Core Player infomration")]
+	[Header("Core Player information")]
 	[SerializeField] protected ThirdPersonCamera thirdPersonCamera;
 	[SerializeField] protected Transform cannonTransform;            // Transform of the cannon
 	[SerializeField] protected TetrisShapeShooter shapeShooter;
@@ -54,17 +54,14 @@ public abstract class CharacterController : CharacterBehaviour, ICharacterContro
 		var mainCam = Camera.main;
 		if (!mainCam.IsNotNull()) {
 			this.thirdPersonCamera = mainCam.GetComponent<ThirdPersonCamera>();
-
 		}
 
 		if (this.thirdPersonCamera.IsNull()) {
 			this.thirdPersonCamera = GameObject.FindObjectOfType<ThirdPersonCamera>();
 		}
 
-		if (this.thirdPersonCamera.IsNull()) {
-			throw new Exception("Camera Not Found so Can't update target to follow Camera");
-		}
-
-		return true;
+		return this.thirdPersonCamera.IsNull()
+			? throw new Exception("Camera Not Found so Can't update target to follow Camera")
+			: true;
 	}
 }

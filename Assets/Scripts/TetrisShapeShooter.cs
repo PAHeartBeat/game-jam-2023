@@ -15,10 +15,10 @@ public class TetrisShapeShooter : MonoBehaviour, IShapeShooter {
 	[SerializeField] private float _shootForce = 10f;               // Force to apply to the shape when shooting
 	[SerializeField] private float _bulletLifetime = 5f;            // Time in seconds before the bullet is destroyed
 
-	[SerializeField] private float _shootTimer = 0f;               // Timer for shooting shapes
 	[SerializeField] private bool _canUseGun = true;               // Flag to indicate if the player can use the gun
 #pragma warning restore IDE0044 // Make field readonly
 
+	private float _shootTimer = 0f;               // Timer for shooting shapes
 	private int _currentShapeIndex = 0;           // Index of the currently selected shape
 
 	public void RemoveBlockFromCache(BlockController obj) {
@@ -27,7 +27,7 @@ public class TetrisShapeShooter : MonoBehaviour, IShapeShooter {
 		}
 	}
 
-	public void SelectNextShape() {
+	public void ChangeShape() {
 		// Increase the current shape index
 		this._currentShapeIndex++;
 
@@ -40,10 +40,20 @@ public class TetrisShapeShooter : MonoBehaviour, IShapeShooter {
 		Debug.Log("Selected Shape Index: " + this._currentShapeIndex);
 	}
 
-	public void ShootShape() {
-		// Select a random Tetris shape from the list
+	public void GetRandomShape() {
 		var randomIndex = Random.Range(0, this._blocks.Length);
-		var shape = this._blocks[randomIndex];
+		if (randomIndex < 0 || randomIndex >= this._blocks.Length) {
+			return;
+		}
+
+		this._currentShapeIndex = randomIndex;
+
+		// Print the selected shape index
+		Debug.Log("Selected Shape Index: " + this._currentShapeIndex);
+	}
+
+	public void ShootShape() {
+		var shape = this._blocks[this._currentShapeIndex];
 
 		// Create a parent object for the shape
 		var block = Instantiate(shape, this._blocksParent);
@@ -61,19 +71,26 @@ public class TetrisShapeShooter : MonoBehaviour, IShapeShooter {
 		block.AddForce(this._characterController.BulletInitPoint.forward * this._shootForce, ForceMode.Impulse);
 
 		// Apply recoil to the player
-		this._characterController.ApplyRecoil();
+		// this._characterController.ApplyRecoil();
 
 		// Disable Shooting while recoil Happens.
 		this.DisableShooting();
+
+		this.GetRandomShape();
 	}
 
 	#region  Mono Action
 #pragma warning disable IDE0051 // private member is unused.
-	void Start()
-		=> this._generatedBlocks = new();
+	void Start() {
+		this._generatedBlocks = new();
+		var dummy = GameObject.Find("ShapeParent");
+		if (null != dummy) {
+			this._blocksParent = dummy?.transform ?? null;
+		}
+	}
 
 	private void Update() {
-		if (this._characterController.IsActive)
+		if (!this._characterController.IsActive)
 			return;
 
 		// Update the shoot timer
@@ -92,7 +109,7 @@ public class TetrisShapeShooter : MonoBehaviour, IShapeShooter {
 
 		// Check for input to change the currently selected shape
 		if (Input.GetButtonDown("Fire1") && !this._isBot) {
-			this.SelectNextShape();
+			this.ChangeShape();
 		}
 	}
 #pragma warning restore IDE0051 // private member is unused.

@@ -12,6 +12,7 @@ GameObject:
   - component: {fileID: 365520581877531977}
   - component: {fileID: 365520581877531976}
   - component: {fileID: 365520581877531982}
+  - component: {fileID: -1003944931995318999}
   - component: {fileID: 3777454628573973489}
   m_Layer: 0
   m_Name: BasePlayer
@@ -28,7 +29,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 365520581877531981}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 60.34, y: 2.7, z: 13.49}
+  m_LocalPosition: {x: 60.34, y: 1, z: 13.49}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 1
   m_Children:
@@ -99,8 +100,28 @@ Rigidbody:
   m_UseGravity: 1
   m_IsKinematic: 0
   m_Interpolate: 0
-  m_Constraints: 112
+  m_Constraints: 118
   m_CollisionDetection: 0
+--- !u!95 &-1003944931995318999
+Animator:
+  serializedVersion: 4
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 365520581877531981}
+  m_Enabled: 1
+  m_Avatar: {fileID: 0}
+  m_Controller: {fileID: 0}
+  m_CullingMode: 0
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 0
+  m_LinearVelocityBlending: 0
+  m_StabilizeFeet: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
+  m_KeepAnimatorControllerStateOnDisable: 0
 --- !u!114 &3777454628573973489
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -114,12 +135,19 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _characterController: {fileID: 0}
-  _blocks: []
+  _blocks:
+  - {fileID: 5547921773078892908, guid: 1530707d5ef032f4a8749a15810c15a2, type: 3}
+  - {fileID: 5547921773078892908, guid: c152969861a334d41b0c11a9d53d3979, type: 3}
+  - {fileID: 5547921773078892908, guid: 4029ab2768df383409b88c323e3d1e66, type: 3}
+  - {fileID: 5547921773078892908, guid: c6bbae06ce4fcba4b82866a1dc7fbd95, type: 3}
+  - {fileID: 5547921773078892908, guid: 3fcaca80b8cc5fb4194f6c6f10380304, type: 3}
+  - {fileID: 5547921773078892908, guid: f1b6241c0b1f11340a28055d6986ea20, type: 3}
+  - {fileID: 5547921773078892908, guid: 3b88dd8910e12d740bf66331e2975e31, type: 3}
   _blocksParent: {fileID: 8038892324021976434}
   _isBot: 0
   _shootInterval: 5
   _shootForce: 20
-  _bulletLifetime: 5
+  _bulletLifetime: 4
   _shootTimer: 0
   _canUseGun: 1
 --- !u!1 &992846584257652040
@@ -626,7 +654,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 7754753792092151836}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: 0, y: 1, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:

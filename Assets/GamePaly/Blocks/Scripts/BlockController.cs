@@ -26,7 +26,9 @@ public class BlockController : MonoBehaviour {
 
 	private void OnEnable() { }
 
-	private void OnDestroy()
-		=> this._controller?.RemoveBlockFromCache(this);
+	private void OnDestroy() {
+		this._controller?.RemoveBlockFromCache(this);
+		Destroy(this.gameObject);
+	}
 #pragma warning restore IDE0051 // private member is unused.
 }

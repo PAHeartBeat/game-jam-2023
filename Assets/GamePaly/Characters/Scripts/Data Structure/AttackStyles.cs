@@ -4,6 +4,7 @@ public enum AttackStyles {
 	ThrowBomb,
 	Punch,
 	ClawSwipe,
+	Kick,
 	BlowFire,
 	BlowAcid
 }

@@ -10,6 +10,7 @@ using UnityEngine;
 /// </summary>
 public class BossBehavior : CharacterBehaviour {
 #pragma warning disable IDE0044 // Make field readonly
+	[Header("Boss specific Information")]
 	/// <summary>
 	/// Represents the boss regular information like health, default damage, etc.
 	/// </summary>
@@ -35,11 +36,6 @@ public class BossBehavior : CharacterBehaviour {
 	/// Indicates whether the boss is able to perform attacks.
 	/// </summary>
 	private bool _canAttack = true;
-
-	/// <summary>
-	/// Indicates whether the attack can cause damage. This flag avoids double damage from animation.
-	/// </summary>
-	private bool _canApplyDamage = true;
 
 	/// <summary>
 	/// Reference to the coroutine for auto-attack.
@@ -78,7 +74,7 @@ public class BossBehavior : CharacterBehaviour {
 			return;
 
 		this._canAttack = false;
-		this._canApplyDamage = true;
+		this.canApplyDamage = true;
 		this._currentAttack = this._attacks[styleIndex];
 
 		Debug.Log($"Boss attacked with style {styleIndex} for {this._currentAttack.damageMultiplier} damage.");
@@ -94,10 +90,10 @@ public class BossBehavior : CharacterBehaviour {
 	/// Applies the attack damage. This method is executed by the Animator when the attack animation finishes.
 	/// </summary>
 	public void ApplyAttackDamage() {
-		if (!this._canApplyDamage)
+		if (!this.canApplyDamage)
 			return;
 
-		this._canApplyDamage = false;
+		this.canApplyDamage = false;
 		var finalDamage = this._bossInfo.damage * (this._currentAttack?.damageMultiplier ?? 1f);
 		var damageInfo = new BossAttackSignal {
 			damage = finalDamage,
