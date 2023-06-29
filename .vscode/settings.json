@@ -1,31 +1,43 @@
 {
+	"[csharp]": {
+		"editor.defaultFormatter": "ms-dotnettools.csharp"
+	},
+	"[json]": {
+		"editor.defaultFormatter": "esbenp.prettier-vscode"
+	},
+	"[jsonc]": {
+		"editor.defaultFormatter": "esbenp.prettier-vscode"
+	},
+	"[xml]": {
+		"editor.defaultFormatter": "redhat.vscode-xml"
+	},
 	"dotnet.completion.showCompletionItemsFromUnimportedNamespaces": true,
 	"dotnet.server.useOmnisharp": true,
 	"files.exclude": {
-		"**/*.3DS": true,
 		"**/*.3ds": true,
+		"**/*.3DS": true,
 		"**/*.asset": true,
 		"**/*.booproj": true,
 		"**/*.cubemap": true,
 		"**/*.dll": true,
 		"**/*.exe": true,
-		"**/*.FBX": true,
 		"**/*.fbx": true,
+		"**/*.FBX": true,
 		"**/*.flare": true,
 		"**/*.gif": true,
 		"**/*.ico": true,
 		"**/*.jpeg": true,
 		"**/*.jpg": true,
-		"**/*.LXO": true,
 		"**/*.lxo": true,
-		"**/*.MA": true,
+		"**/*.LXO": true,
 		"**/*.ma": true,
+		"**/*.MA": true,
 		"**/*.mat": true,
 		"**/*.meta": true,
 		"**/*.mid": true,
 		"**/*.midi": true,
-		"**/*.OBJ": true,
 		"**/*.obj": true,
+		"**/*.OBJ": true,
 		"**/*.pdf": true,
 		"**/*.pidb": true,
 		"**/*.png": true,
@@ -43,15 +55,15 @@
 		"**/.DS_Store": true,
 		"**/.git": true,
 		"**/.gitmodules": true,
-		"Build/": true,
 		"build/": true,
-		"library/": true,
+		"Build/": true,
 		"Library/": true,
-		"Obj/": true,
+		"library/": true,
 		"obj/": true,
+		"Obj/": true,
 		"ProjectSettings/": true,
-		"Temp/": true,
-		"temp/": true
+		"temp/": true,
+		"Temp/": true
 	},
 	"omnisharp.enableImportCompletion": true,
 	"omnisharp.enableMsBuildLoadProjectsOnDemand": true,
@@ -60,5 +72,9 @@
 	"omnisharp.organizeImportsOnFormat": true,
 	"omnisharp.projectLoadTimeout": 2400,
 	"omnisharp.sdkIncludePrereleases": false,
-	"omnisharp.useModernNet": false
+	"omnisharp.useModernNet": false,
+	"editor.defaultFormatter": "ms-dotnettools.csharp",
+	"editor.formatOnPaste": true,
+	"editor.formatOnSave": true,
+	"editor.insertSpaces": false
 }

@@ -7,12 +7,6 @@
       "dependencies": {},
       "hash": "8a8fa5a9659a6d63f196391c71e06c4286c8acd7"
     },
-    "com.google.android.appbundle": {
-      "version": "file:../Packages/com.google.android.appbundle-1.8.0.tgz",
-      "depth": 0,
-      "source": "local-tarball",
-      "dependencies": {}
-    },
     "com.google.external-dependency-manager": {
       "version": "file:../Packages/com.google.external-dependency-manager-1.2.175.tgz",
       "depth": 0,
@@ -60,22 +54,6 @@
       "source": "registry",
       "dependencies": {},
       "url": "https://npm.cloudsmith.io/ipaheartbeat/core"
-    },
-    "com.nukebox.simplelogger": {
-      "version": "https://ucb.nukebox:_xr!UD&nQuiv@bitbucket.nukeboxstudios.com/scm/fp/simplelogger.git",
-      "depth": 0,
-      "source": "git",
-      "dependencies": {
-        "com.unity.textmeshpro": "3.0.6"
-      },
-      "hash": "7acea7c3e81b5caefd29d6a3348756220e11fbd5"
-    },
-    "com.tayx.graphy": {
-      "version": "https://github.com/Tayx94/graphy.git",
-      "depth": 0,
-      "source": "git",
-      "dependencies": {},
-      "hash": "7b634c383ae631e7f4efaf08235c2d829a7d3ecc"
     },
     "com.unity.2d.sprite": {
       "version": "1.0.0",
