@@ -12,9 +12,9 @@ GameObject:
   - component: {fileID: 365520581877531977}
   - component: {fileID: 365520581877531976}
   - component: {fileID: 365520581877531982}
-  - component: {fileID: 365520581877531979}
+  - component: {fileID: 3777454628573973489}
   m_Layer: 0
-  m_Name: Player 1
+  m_Name: BasePlayer
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -101,7 +101,7 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 112
   m_CollisionDetection: 0
---- !u!114 &365520581877531979
+--- !u!114 &3777454628573973489
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -113,15 +113,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8ed196e1bdc36064783eff978623d669, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  cubePrefab: {fileID: 0}
-  cannonTransform: {fileID: 8038892324021976434}
-  shootInterval: 5
-  shootForce: 20
-  bulletLifetime: 5
-  recoilDistance: 3
-  moveSpeed: 5
-  thirdPersonCamera: {fileID: 0}
-  smoothness: 0.5
+  _characterController: {fileID: 0}
+  _blocks: []
+  _blocksParent: {fileID: 8038892324021976434}
+  _isBot: 0
+  _shootInterval: 5
+  _shootForce: 20
+  _bulletLifetime: 5
+  _shootTimer: 0
+  _canUseGun: 1
 --- !u!1 &992846584257652040
 GameObject:
   m_ObjectHideFlags: 0
@@ -365,15 +365,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8ed196e1bdc36064783eff978623d669, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  cubePrefab: {fileID: 0}
-  cannonTransform: {fileID: 8038892324021976434}
-  shootInterval: 2
-  shootForce: 100
-  bulletLifetime: 5
-  recoilDistance: 3
-  moveSpeed: 5
-  thirdPersonCamera: {fileID: 0}
-  smoothness: 0.5
+  _characterController: {fileID: 0}
+  _blocks: []
+  _blocksParent: {fileID: 0}
+  _isBot: 0
+  _shootInterval: 2
+  _shootForce: 10
+  _bulletLifetime: 5
+  _shootTimer: 0
+  _canUseGun: 1
 --- !u!1 &3337645196728565631
 GameObject:
   m_ObjectHideFlags: 0

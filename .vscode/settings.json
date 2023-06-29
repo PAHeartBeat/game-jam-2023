@@ -76,5 +76,6 @@
 	"editor.defaultFormatter": "ms-dotnettools.csharp",
 	"editor.formatOnPaste": true,
 	"editor.formatOnSave": true,
-	"editor.insertSpaces": false
+	"editor.insertSpaces": false,
+	"cSpell.words": ["Rigidbody"]
 }
