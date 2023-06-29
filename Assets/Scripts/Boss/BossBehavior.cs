@@ -1,4 +1,5 @@
 using System.Collections;
+
 using iPAHeartBeat.Core.SignalSystem;
 
 using UnityEngine;
@@ -10,7 +11,7 @@ public class BossBehavior : MonoBehaviour
 	[SerializeField] private float attackInterval = 2f;  // Interval between attacks
 	[SerializeField] private bool autoAttack = false;  // Flag to enable auto-attack
 	[SerializeField] private bool attackDamageViaAnimation = false;  // Flag to Apply damage after or before animation finish
-	[SerializeField] private Attack[] attackStyles;  // Array of attack styles
+	[SerializeField] private Attack[] attacks;  // Array of attack styles
 
 	private bool isActive = false;  // Flag to check if the boss is active
 	private bool canAttack = true;  // Flag to check if the boss can attack
@@ -37,12 +38,12 @@ public class BossBehavior : MonoBehaviour
 	// Function to perform an attack based on the given attack style index
 	public void Attack(int styleIndex)
 	{
-		if (!isActive || styleIndex < 0 || styleIndex >= attackStyles.Length || !canAttack)
+		if (!isActive || styleIndex < 0 || styleIndex >= attacks.Length || !canAttack)
 			return;
 
 		canAttack = false;
 		canApplyDamage = true;
-		currentAttack = attackStyles[styleIndex];
+		currentAttack = attacks[styleIndex];
 		Debug.Log("Boss attacked with style " + styleIndex + " for " + currentAttack.damage + " damage.");
 		this.animator?.Play(currentAttack.attackStyle.ToString());
 		if (!attackDamageViaAnimation)
@@ -97,30 +98,11 @@ public class BossBehavior : MonoBehaviour
 		{
 			if (canAttack)
 			{
-				int randomStyle = Random.Range(0, attackStyles.Length);
+				int randomStyle = Random.Range(0, attacks.Length);
 				Attack(randomStyle);
 			}
 
 			yield return new WaitForSeconds(attackInterval);
 		}
 	}
-}
-
-// AttackStyle class to define an attack style with a specific damage point
-[System.Serializable]
-public class Attack
-{
-	public uint damage;  // Damage point for the attack style
-	public AttackStyles attackStyle;
-}
-
-public enum AttackStyles
-{
-	FireBullet,
-	FireMissile,
-	ThrowBomb,
-	Punch,
-	ClawSwipe,
-	BlowFire,
-	BlowAcid
 }
