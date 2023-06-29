@@ -1,0 +1,34 @@
+* text=auto eol=lf whitespace=blank-at-eol,-blank-at-eof,-space-before-tab,tab-in-indent,tabwidth=4
+
+# Custom for Visual Studio
+*.cs     text diff=csharp
+*.sln    text merge=union
+*.csproj text merge=union
+
+##################################################################
+# Unity YAML
+#
+# Use Unity's semantic merge tool "Smart Merge"
+# to assist in merging Unity-specific files.
+
+# Un-comment the following lines to enable.
+*.anim merge=unityyamlmerge eol=lf
+*.asset merge=unityyamlmerge eol=lf
+*.controller merge=unityyamlmerge eol=lf
+*.mat merge=unityyamlmerge eol=lf
+*.meta merge=unityyamlmerge eol=lf
+*.physicsMaterial merge=unityyamlmerge eol=lf
+*.physicsMaterial2D merge=unityyamlmerge eol=lf
+*.prefab merge=unityyamlmerge eol=lf
+*.unity merge=unityyamlmerge eol=lf
+
+##################################################################
+# Collapse Unity-generated files on GitHub
+#
+# Un-comment the following lines to enable.
+#
+*.asset linguist-generated
+*.mat linguist-generated
+*.meta linguist-generated
+*.prefab linguist-generated
+*.unity linguist-generated
