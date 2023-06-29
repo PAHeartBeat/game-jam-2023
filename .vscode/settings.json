@@ -72,5 +72,9 @@
 	"omnisharp.organizeImportsOnFormat": true,
 	"omnisharp.projectLoadTimeout": 2400,
 	"omnisharp.sdkIncludePrereleases": false,
-	"omnisharp.useModernNet": false
+	"omnisharp.useModernNet": false,
+	"editor.defaultFormatter": "ms-dotnettools.csharp",
+	"editor.formatOnPaste": true,
+	"editor.formatOnSave": true,
+	"editor.insertSpaces": false
 }
