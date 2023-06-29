@@ -1,23 +1,54 @@
 using System.Collections;
+
 using iPAHeartBeat.Core.Extensions;
 using iPAHeartBeat.Core.SignalSystem;
+
 using UnityEngine;
 
 /// <summary>
 /// Represents the behavior of the boss character.
 /// </summary>
 public class BossBehavior : CharacterBehaviour {
-#pragma warning disable IDE0044 // Make Field Read-only
-	[SerializeField] private Animator _animator; // Animation System for Boss/character
-	[SerializeField] private Boss _bossInfo; // Boss Regular information like health, default damage, etc...
-	[SerializeField] private bool _attackDamageViaAnimation = false; // Flag to apply damage after or before animation finish
-	[SerializeField] private Attack[] _attacks; // Array of attack styles
-#pragma warning restore IDE0044 // Make Field Read-only
+#pragma warning disable IDE0044 // Make field readonly
+	/// <summary>
+	/// Represents the boss regular information like health, default damage, etc.
+	/// </summary>
+	[SerializeField] private Boss _bossInfo;
 
-	private bool _isActive = false; // Flag to check if the boss is active
-	private bool _canAttack = true; // Flag to check if the boss can attack
-	private bool _canApplyDamage = true; // Flag to check if attack can damage or not. It avoids double damage from Animation.
-	private Coroutine _autoAttackCoroutine; // Reference to the auto-attack coroutine
+	/// <summary>
+	/// Determines whether the damage should be applied after or before the animation finishes.
+	/// </summary>
+	[SerializeField] private bool _attackDamageViaAnimation = false;
+
+	/// <summary>
+	/// An collection of attack styles which can be performed by the character.
+	/// </summary>
+	[SerializeField] private Attack[] _attacks;
+#pragma warning restore IDE0044 // Make field readonly
+
+	/// <summary>
+	/// Indicates whether the boss is currently active.
+	/// </summary>
+	private bool _isActive = false;
+
+	/// <summary>
+	/// Indicates whether the boss is able to perform attacks.
+	/// </summary>
+	private bool _canAttack = true;
+
+	/// <summary>
+	/// Indicates whether the attack can cause damage. This flag avoids double damage from animation.
+	/// </summary>
+	private bool _canApplyDamage = true;
+
+	/// <summary>
+	/// Reference to the coroutine for auto-attack.
+	/// </summary>
+	private Coroutine _autoAttackCoroutine;
+
+	/// <summary>
+	/// Current attack related information. This is required to deal attack after the animation is over.
+	/// </summary>
 	private Attack _currentAttack = null;
 
 	/// <summary>
@@ -51,12 +82,12 @@ public class BossBehavior : CharacterBehaviour {
 		this._currentAttack = this._attacks[styleIndex];
 
 		Debug.Log($"Boss attacked with style {styleIndex} for {this._currentAttack.damageMultiplier} damage.");
-		this._animator?.Play(this._currentAttack.attackStyle.ToString());
-		if (this._animator.IsNull() || !this._attackDamageViaAnimation) {
+		this.animator?.Play(this._currentAttack.attackStyle.ToString());
+		if (this.animator.IsNull() || !this._attackDamageViaAnimation) {
 			this.ApplyAttackDamage();
 		}
 
-		_ = this.StartCoroutine(this.ResetAttack());
+		StartCoroutine(this.ResetAttack());
 	}
 
 	/// <summary>
@@ -75,6 +106,46 @@ public class BossBehavior : CharacterBehaviour {
 		SignalManager.Me.Fire<BossAttackSignal>(damageInfo);
 	}
 
+	/// <inheritdoc />
+	public override void TakeDamage(float damagePoint) {
+		if (damagePoint <= 0) return;
+
+		this._bossInfo.Health -= damagePoint;
+		if (this._bossInfo.Health <= 0) {
+			this.Die();
+		}
+	}
+
+	/// <inheritdoc />
+	public override void Die() {
+		var dieInfo = new BossDiedSignal {
+			reward = this._bossInfo.reward * this._bossInfo.rewardMultiplier,
+		};
+		SignalManager.Me.Fire<BossDiedSignal>(dieInfo);
+		this.animator?.Play(this.dieAnimation);
+	}
+
+	/// <inheritdoc />
+	protected override void OnEnable() {
+		base.OnEnable();
+		SignalManager.Me.SubscribeSignal<BossDamageSignal>(this.OnBossAttacked);
+	}
+
+	/// <inheritdoc />
+	protected override void OnDisable() {
+		base.OnDisable();
+		SignalManager.Me.UnsubscribeSignal<BossDamageSignal>(this.OnBossAttacked);
+	}
+
+	/// <summary>
+	/// Event handler for boss being attacked by an external source.
+	/// </summary>
+	/// <param name="data">The BossDamageSignal containing damage information.</param>
+	private void OnBossAttacked(BossDamageSignal data) {
+		if (!this._isActive) return;
+		this.TakeDamage(data?.damage ?? 0);
+	}
+
 	/// <summary>
 	/// Coroutine to reset the attack flag after the attack interval.
 	/// </summary>
@@ -86,15 +157,16 @@ public class BossBehavior : CharacterBehaviour {
 	/// <summary>
 	/// Starts the auto-attack coroutine.
 	/// </summary>
-	private void StartAutoAttack()
-		=> this._autoAttackCoroutine ??= this.StartCoroutine(this.AutoAttack());
+	private void StartAutoAttack() {
+		this._autoAttackCoroutine ??= StartCoroutine(this.AutoAttack());
+	}
 
 	/// <summary>
 	/// Stops the auto-attack coroutine.
 	/// </summary>
 	private void StopAutoAttack() {
 		if (this._autoAttackCoroutine != null) {
-			this.StopCoroutine(this._autoAttackCoroutine);
+			StopCoroutine(this._autoAttackCoroutine);
 			this._autoAttackCoroutine = null;
 		}
 	}
@@ -111,20 +183,5 @@ public class BossBehavior : CharacterBehaviour {
 
 			yield return new WaitForSeconds(this._bossInfo.attackInterval);
 		}
-	}
-
-	public override void TakeDamage(float damagePoint) {
-		if (damagePoint <= 0) return;
-
-		this._bossInfo.Health -= damagePoint;
-		if (this._bossInfo.Health <= 0) {
-			this.Die();
-		}
-
-	}
-	public override void Die() {
-		var dieInfo = new BossDiedSignal {
-		};
-		SignalManager.Me.Fire<BossDiedSignal>(dieInfo);
 	}
 }
