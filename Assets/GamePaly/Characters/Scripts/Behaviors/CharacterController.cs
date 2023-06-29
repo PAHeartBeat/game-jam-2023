@@ -1,7 +1,10 @@
+using System;
+using iPAHeartBeat.Core.Extensions;
 using UnityEngine;
 
-public abstract class CharacterController : MonoBehaviour, ICharacterController {
+public abstract class CharacterController : CharacterBehaviour, ICharacterController {
 #pragma warning disable IDE0044 // Make field readonly
+	[Header("Core Player infomration")]
 	[SerializeField] protected ThirdPersonCamera thirdPersonCamera;
 	[SerializeField] protected Transform cannonTransform;            // Transform of the cannon
 	[SerializeField] protected TetrisShapeShooter shapeShooter;
@@ -12,7 +15,7 @@ public abstract class CharacterController : MonoBehaviour, ICharacterController 
 
 	public bool IsActive => !this.thirdPersonCamera.isCinematicView;
 
-	public Transform BulletInitPoint { get => this.cannonTransform; }
+	public Transform BulletInitPoint => this.cannonTransform;
 
 	protected Transform trCache;
 
@@ -26,18 +29,42 @@ public abstract class CharacterController : MonoBehaviour, ICharacterController 
 
 	#region  Mono Action
 #pragma warning disable IDE0051 // private member is unused.
-	protected virtual void Start()
-		=> this.trCache = this.transform;
+	protected override void Start() {
+		base.Start();
+		this.trCache = this.transform;
+		if (this.thirdPersonCamera.IsNull()) {
+			_ = this.TryToGetCameraController();
+		}
+	}
 
 	protected virtual void Update() {
 		if (this.thirdPersonCamera.isCinematicView)
 			return;
 
 		// Move the player automatically
-		var targetZ = this.trCache.position.z + (this.moveSpeed * Time.smoothDeltaTime);
-		var targetPosition = new Vector3(this.trCache.position.x, this.trCache.position.y, targetZ);
-		this.trCache.position = Vector3.Lerp(this.trCache.position, targetPosition, this.smoothness);
+		// var targetZ = this.trCache.position.z + (this.moveSpeed * Time.smoothDeltaTime);
+		// var targetPosition = new Vector3(this.trCache.position.x, this.trCache.position.y, targetZ);
+		// this.trCache.position = Vector3.Lerp(this.trCache.position, targetPosition, this.smoothness);
+		this.transform.Translate(Vector3.forward * this.moveSpeed * Time.smoothDeltaTime, Space.Self);
 	}
 #pragma warning restore IDE0051 // private member is unused.
 	#endregion
+
+	protected virtual bool TryToGetCameraController() {
+		var mainCam = Camera.main;
+		if (!mainCam.IsNotNull()) {
+			this.thirdPersonCamera = mainCam.GetComponent<ThirdPersonCamera>();
+
+		}
+
+		if (this.thirdPersonCamera.IsNull()) {
+			this.thirdPersonCamera = GameObject.FindObjectOfType<ThirdPersonCamera>();
+		}
+
+		if (this.thirdPersonCamera.IsNull()) {
+			throw new Exception("Camera Not Found so Can't update target to follow Camera");
+		}
+
+		return true;
+	}
 }
