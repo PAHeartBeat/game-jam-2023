@@ -1,3 +1,3 @@
 public class BossAttackSignal {
-	public uint damage;
+	public float damage;
 }
