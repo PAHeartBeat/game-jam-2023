@@ -1,12 +1,9 @@
 {
 	"dependencies": {
 		"com.dbrizov.naughtyattributes": "https://github.com/dbrizov/NaughtyAttributes.git#upm",
-		"com.google.android.appbundle": "file:../Packages/com.google.android.appbundle-1.8.0.tgz",
 		"com.google.external-dependency-manager": "file:../Packages/com.google.external-dependency-manager-1.2.175.tgz",
 		"com.ipaheartbeat.core.extensions": "2.0.0",
 		"com.ipaheartbeat.core.observer-system": "1.0.0-RC1",
-		"com.nukebox.simplelogger": "https://ucb.nukebox:_xr!UD&nQuiv@bitbucket.nukeboxstudios.com/scm/fp/simplelogger.git",
-		"com.tayx.graphy": "https://github.com/Tayx94/graphy.git",
 		"com.unity.2d.sprite": "1.0.0",
 		"com.unity.2d.tilemap": "1.0.0",
 		"com.unity.assetbundlebrowser": "1.7.0",
