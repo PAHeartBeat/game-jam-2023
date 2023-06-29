@@ -1,5 +1,4 @@
-public class Boss : Entity
-{
-	public float Damage;
-	public float Reward;
+public class Boss : Entity {
+	public float damage;
+	public float reward;
 }

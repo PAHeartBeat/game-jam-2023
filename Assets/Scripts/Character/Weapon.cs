@@ -1,6 +1,5 @@
-public class Weapon : Entity
-{
-	public float Damage;
-	public float ReloadTime;
-	public float FireReconcile;
+public class Weapon : Entity {
+	public float damage;
+	public float reloadTime;
+	public float fireReconcile;
 }

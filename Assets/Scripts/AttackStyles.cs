@@ -1,5 +1,4 @@
-public enum AttackStyles
-{
+public enum AttackStyles {
 	FireBullet,
 	FireMissile,
 	ThrowBomb,

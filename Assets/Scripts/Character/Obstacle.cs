@@ -1,5 +1,4 @@
-public class Obstacle : Entity
-{
-	public float Reward;
+public class Obstacle : Entity {
+	public long reward;
 
 }

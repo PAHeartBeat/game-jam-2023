@@ -1,4 +1,3 @@
-public abstract class Entity
-{
-	public float Health;
+public abstract class Entity {
+	public float health;
 }

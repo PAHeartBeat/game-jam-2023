@@ -1,4 +1,3 @@
-public class Shape : Entity
-{
-	public float MovementSpeed;
+public class Shape : Entity {
+	public float movementSpeed;
 }
