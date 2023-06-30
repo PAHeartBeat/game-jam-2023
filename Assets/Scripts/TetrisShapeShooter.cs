@@ -1,152 +1,132 @@
-using UnityEngine;
+﻿using System.Collections;
 using System.Collections.Generic;
+using UnityEngine;
 
-public class TetrisShapeShooter : MonoBehaviour
-{
-    public GameObject cubePrefab;                // Prefab for the cube shape
-    public Transform cannonTransform;            // Transform of the cannon
+public class TetrisShapeShooter : MonoBehaviour, IShapeShooter {
+#pragma warning disable IDE0044 // Make field readonly
+	[SerializeField] private CharacterController _characterController;
+	[SerializeField] private BlockController[] _blocks;
+	[SerializeField] private Transform _blocksParent;
+	private List<BlockController> _generatedBlocks;
 
-    public float shootInterval = 2f;             // Interval between each shape shoot
-    public float shootForce = 10f;               // Force to apply to the shape when shooting
-    public float bulletLifetime = 5f;            // Time in seconds before the bullet is destroyed
-    public float recoilDistance = 3f;            // Distance the player is pushed back when the cannon fires
-    public float moveSpeed = 5f;                  // Speed at which the player moves
+	[SerializeField] private bool _isBot;
 
-    [SerializeField] private float smoothness = 0.5f;
-	[SerializeField] private Animator animator;
+	[SerializeField] private float _shootInterval = 2f;             // Interval between each shape shoot
+	[SerializeField] private float _shootForce = 10f;               // Force to apply to the shape when shooting
+	[SerializeField] private float _bulletLifetime = 5f;            // Time in seconds before the bullet is destroyed
 
-	private float shootTimer = 0f;               // Timer for shooting shapes
-    private bool canUseGun = true;               // Flag to indicate if the player can use the gun
-    private int currentShapeIndex = 0;           // Index of the currently selected shape
+	[SerializeField] private bool _canUseGun = true;               // Flag to indicate if the player can use the gun
+#pragma warning restore IDE0044 // Make field readonly
 
-    private List<Vector2Int[]> tetrisShapes = new List<Vector2Int[]>
-    {
-        new Vector2Int[] { new Vector2Int(0, 0), new Vector2Int(0, -1), new Vector2Int(0, -2), new Vector2Int(1, -2) }, // L shape
-        new Vector2Int[] { new Vector2Int(0, 0), new Vector2Int(0, -1), new Vector2Int(0, -2), new Vector2Int(-1, -2) }, // Reverse L shape
-        new Vector2Int[] { new Vector2Int(0, 0), new Vector2Int(0, -1), new Vector2Int(-1, -1), new Vector2Int(-1, 0) }, // Square shape
-        new Vector2Int[] { new Vector2Int(0, 0), new Vector2Int(0, -1), new Vector2Int(-1, 0), new Vector2Int(1, -1) }, // Z shape
-        new Vector2Int[] { new Vector2Int(0, 0), new Vector2Int(0, -1), new Vector2Int(1, 0), new Vector2Int(-1, -1) }, // Reverse Z shape
-        new Vector2Int[] { new Vector2Int(0, 0), new Vector2Int(0, -1), new Vector2Int(0, -2), new Vector2Int(0, -3) }, // Line shape
-        new Vector2Int[] { new Vector2Int(0, 0), new Vector2Int(0, -1), new Vector2Int(0, -2), new Vector2Int(-1, -2) }  // T shape
-    };
+	private float _shootTimer = 0f;               // Timer for shooting shapes
+	private int _currentShapeIndex = 0;           // Index of the currently selected shape
 
-	[SerializeField] private float minMovementSpeed = 0.1f; // Minimum movement speed to trigger the "Walk" animation
-	private Vector3 targetPosition;
+	public void RemoveBlockFromCache(BlockController obj) {
+		if (this._generatedBlocks.Contains(obj)) {
+			_ = this._generatedBlocks.Remove(obj);
+		}
+	}
 
-	private void Start() {
-			animator.SetTrigger("Run");
+	public void ChangeShape() {
+		// Increase the current shape index
+		this._currentShapeIndex++;
+
+		// Wrap the index around if it exceeds the shape count
+		if (this._currentShapeIndex >= this._blocks.Length) {
+			this._currentShapeIndex = 0;
+		}
+
+		// Print the selected shape index
+		Debug.Log("Selected Shape Index: " + this._currentShapeIndex);
+	}
+
+	public void GetRandomShape() {
+		var randomIndex = Random.Range(0, this._blocks.Length);
+		if (randomIndex < 0 || randomIndex >= this._blocks.Length) {
+			return;
+		}
+		this._currentShapeIndex = randomIndex;
+
+		// Print the selected shape index
+		Debug.Log("Selected Shape Index: " + this._currentShapeIndex);
+	}
+
+	public void ShootShape() {
+		if (this._currentShapeIndex < 0 || this._currentShapeIndex >= this._blocks.Length) {
+			return;
+		}
+		var shape = this._blocks[this._currentShapeIndex];
+
+		// Create a parent object for the shape
+		var block = Instantiate(shape, this._blocksParent);
+		this._generatedBlocks.Add(block);
+
+		// Position and scale the shape at the cannon's position
+		block.transform.position = this._characterController.BulletInitPoint.position;
+		// Adjust the scale as needed
+		block.transform.localScale = new Vector3(0.5f, 0.5f, 0.5f);
+
+		// Setup the block for it's behaviour
+		block.Setup(this, this._bulletLifetime);
+
+		// Apply a force to shoot the shape
+		block.AddForce(this._characterController.BulletInitPoint.forward * this._shootForce, ForceMode.Impulse);
+
+		// Apply recoil to the player
+		// this._characterController.ApplyRecoil();
+
+		// Disable Shooting while recoil Happens.
+		this.DisableShooting();
+
+		this.GetRandomShape();
+	}
+
+	#region  Mono Action
+#pragma warning disable IDE0051 // private member is unused.
+	void Start() {
+		this._generatedBlocks = new();
+		var dummy = GameObject.Find("ShapeParent");
+		if (null != dummy) {
+			this._blocksParent = dummy?.transform ?? null;
+		}
 	}
 
 	private void Update() {
-		shootTimer += Time.deltaTime;
+		if (!this._characterController.IsActive)
+			return;
 
-		if (shootTimer >= shootInterval) {
-			if (canUseGun) {
-				ShootTetrisShape();
+		// Update the shoot timer
+		this._shootTimer += Time.smoothDeltaTime;
+
+		// Check if it's time to shoot a shape
+		if (this._shootTimer >= this._shootInterval) {
+			// Shoot a random Tetris shape
+			if (this._canUseGun) {
+				this.ShootShape();
 			}
-			shootTimer = 0f;
+
+			// Reset the shoot timer
+			this._shootTimer = 0f;
 		}
 
-		// Calculate the movement direction based on the character's forward direction
-		Vector3 movementDirection = transform.forward;
-
-		// Calculate the target position based on the movement direction and speed
-		Vector3 targetPosition = transform.position + movementDirection * moveSpeed * Time.deltaTime;
-
-		// Move the character to the target position
-		transform.position = Vector3.Lerp(transform.position, targetPosition, smoothness);
-
-		if (Input.GetButtonDown("Fire1")) {
-			SelectNextShape();
+		// Check for input to change the currently selected shape
+		if (Input.GetButtonDown("Fire1") && !this._isBot) {
+			this.ChangeShape();
 		}
 	}
+#pragma warning restore IDE0051 // private member is unused.
+	#endregion
 
-	private void SelectNextShape()
-    {
-        // Increase the current shape index
-        currentShapeIndex++;
+	private void DisableShooting() {
+		// Disable the gun usage temporarily
+		this._canUseGun = false;
 
-        // Wrap the index around if it exceeds the shape count
-        if (currentShapeIndex >= tetrisShapes.Count)
-        {
-            currentShapeIndex = 0;
-        }
+		// Start a coroutine to enable gun usage after a delay
+		_ = this.StartCoroutine(this.EnableGunAfterDelay(this._shootInterval));
+	}
 
-        // Print the selected shape index
-        Debug.Log("Selected Shape Index: " + currentShapeIndex);
-    }
-
-    private void ShootTetrisShape()
-    {
-        // Select a random Tetris shape from the list
-        int randomIndex = Random.Range(0, tetrisShapes.Count);
-        Vector2Int[] tetrisShape = tetrisShapes[randomIndex];
-
-        // Create a parent object for the shape
-        GameObject shapeParent = new GameObject("TetrisShape");
-
-        Color color = GetRandomColor();
-        // Generate the shape using cubes
-        for (int i = 0; i < tetrisShape.Length; i++)
-        {
-            // Create a cube instance
-            GameObject cube = Instantiate(cubePrefab, shapeParent.transform);
-            cube.transform.localPosition = new Vector3(tetrisShape[i].x, -tetrisShape[i].y, 0f);
-
-            // Apply a random color to the cube
-            Renderer cubeRenderer = cube.transform.GetChild(0).GetComponent<Renderer>();
-            cubeRenderer.material.color = color;
-        }
-
-        // Position and scale the shape at the cannon's position
-        shapeParent.transform.position = cannonTransform.position;
-        shapeParent.transform.localScale = new Vector3(0.5f, 0.5f, 0.5f); // Adjust the scale as needed
-
-        // Add a Rigidbody component to the parent object
-        Rigidbody shapeParentRigidbody = shapeParent.AddComponent<Rigidbody>();
-        shapeParentRigidbody.useGravity = false;
-        // Apply a force to shoot the shape
-        shapeParentRigidbody.AddForce(cannonTransform.forward * shootForce, ForceMode.Impulse);
-
-        // Attach a script to the shape parent to allow rotation
-        shapeParent.AddComponent<TetrisShapeRotation>();
-
-        // Destroy the bullet after a certain amount of time
-        Destroy(shapeParent, bulletLifetime);
-
-        // Apply recoil to the player
-        //ApplyRecoil();
-    }
-
-    private Color GetRandomColor()
-    {
-        // Generate random RGB values
-        float r = Random.Range(0f, 1f);
-        float g = Random.Range(0f, 1f);
-        float b = Random.Range(0f, 1f);
-
-        // Create and return the color
-        return new Color(r, g, b);
-    }
-
-    private void ApplyRecoil()
-    {
-        // Calculate the recoil direction
-        Vector3 recoilDirection = -cannonTransform.forward;
-
-        // Push the player back
-        transform.position += recoilDirection * recoilDistance;
-
-        // Disable the gun usage temporarily
-        canUseGun = false;
-
-        // Start a coroutine to enable gun usage after a delay
-        StartCoroutine(EnableGunAfterDelay(shootInterval));
-    }
-
-    private System.Collections.IEnumerator EnableGunAfterDelay(float delay)
-    {
-        yield return new WaitForSeconds(delay);
-        canUseGun = true;
-    }
+	private IEnumerator EnableGunAfterDelay(float delay) {
+		yield return new WaitForSeconds(delay);
+		this._canUseGun = true;
+	}
 }
