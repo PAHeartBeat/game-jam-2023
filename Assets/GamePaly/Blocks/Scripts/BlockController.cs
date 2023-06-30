@@ -4,15 +4,17 @@ using UnityEngine;
 public class BlockController : MonoBehaviour, IBlockController {
 #pragma warning disable IDE0044 // Make field readonly
 	[SerializeField] private Rigidbody _rigidbody;
-	[SerializeField] private ObstacleShapes _shape;
+	[SerializeField] private ShapeStyles _shape;
 	[SerializeField] private int _angle;
 	// [SerializeField] private TetrisShapeRotation _rotation;
 #pragma warning restore IDE0044 // Make field readonly
 
-	public ObstacleShapes Shape => this._shape;
+	public ShapeStyles Shape => this._shape;
 	public int Angle => this._angle;
+	public bool WasByBot => this._wasByBot;
 
 	private IShapeShooter _controller;
+	[SerializeField] private bool _wasByBot;
 
 	public void Setup(IShapeShooter controller, float lifeTime) {
 		this._controller = controller;

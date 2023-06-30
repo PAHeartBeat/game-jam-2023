@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using iPAHeartBeat.Core.SignalSystem;
 using UnityEngine;
 
 public class TetrisShapeShooter : MonoBehaviour, IShapeShooter {
@@ -8,19 +9,23 @@ public class TetrisShapeShooter : MonoBehaviour, IShapeShooter {
 	[SerializeField] private BlockController[] _blocks;
 	[SerializeField] private Transform _blocksParent;
 	private List<BlockController> _generatedBlocks;
-
-	public bool _isBot;
-
+	[SerializeField] private bool _isBot;
 	[SerializeField] private float _shootInterval = 2f;             // Interval between each shape shoot
 	[SerializeField] private float _shootForce = 10f;               // Force to apply to the shape when shooting
 	[SerializeField] private float _bulletLifetime = 5f;            // Time in seconds before the bullet is destroyed
-
 	[SerializeField] private bool _canUseGun = true;               // Flag to indicate if the player can use the gun
 #pragma warning restore IDE0044 // Make field readonly
+	public bool IsBot => this._isBot;
+
+	public int CurrentShapeIndex {
+		get => this._currentShapeIndex; set {
+			this._currentShapeIndex = value;
+			this.FireShapeChangeSignal();
+		}
+	}
 
 	private float _shootTimer = 0f;               // Timer for shooting shapes
 	private int _currentShapeIndex = 0;           // Index of the currently selected shape
-	[SerializeField] private int _botPercentageOfMakingRightDecision = 60;
 
 	public void RemoveBlockFromCache(BlockController obj) {
 		if (this._generatedBlocks.Contains(obj)) {
@@ -29,24 +34,13 @@ public class TetrisShapeShooter : MonoBehaviour, IShapeShooter {
 	}
 
 	public void ChangeShape() {
-
-		if (_isBot) {
-			var decisionIndex = Random.Range(0, 100);
-			if (decisionIndex < _botPercentageOfMakingRightDecision) {
-				return;
-			}
-		}
-
 		// Increase the current shape index
-		this._currentShapeIndex++;
+		var nextIndex = this._currentShapeIndex++;
 
 		// Wrap the index around if it exceeds the shape count
-		if (this._currentShapeIndex >= this._blocks.Length) {
-			this._currentShapeIndex = 0;
-		}
-
-		// Print the selected shape index
-		Debug.Log("Selected Shape Index: " + this._currentShapeIndex);
+		this.CurrentShapeIndex = nextIndex >= this._blocks.Length
+			? 0
+			: nextIndex;
 	}
 
 	public void GetRandomShape() {
@@ -54,10 +48,8 @@ public class TetrisShapeShooter : MonoBehaviour, IShapeShooter {
 		if (randomIndex < 0 || randomIndex >= this._blocks.Length) {
 			return;
 		}
-		this._currentShapeIndex = randomIndex;
 
-		// Print the selected shape index
-		Debug.Log("Selected Shape Index: " + this._currentShapeIndex);
+		this.CurrentShapeIndex = randomIndex;
 	}
 
 	public void ShootShape() {
@@ -91,13 +83,7 @@ public class TetrisShapeShooter : MonoBehaviour, IShapeShooter {
 	}
 
 	public void RotateShape() {
-		if (_isBot) {
-			var decisionIndex = Random.Range(0, 100);
-			if (decisionIndex < _botPercentageOfMakingRightDecision) {
-				return;
-			}
-		}
-		for (int i = 0; i < this._generatedBlocks.Count; i++) {
+		for (var i = 0; i < this._generatedBlocks.Count; i++) {
 			this._generatedBlocks[i].RotateShape();
 		}
 	}
@@ -131,14 +117,19 @@ public class TetrisShapeShooter : MonoBehaviour, IShapeShooter {
 			// Reset the shoot timer
 			this._shootTimer = 0f;
 		}
-
-		// Check for input to change the currently selected shape
-		if (Input.GetButtonDown("Fire1") || this._isBot) {
-			this.ChangeShape();
-		}
 	}
 #pragma warning restore IDE0051 // private member is unused.
 	#endregion
+	private void FireShapeChangeSignal() {
+
+		var nextBlock = this._blocks[this.CurrentShapeIndex];
+		var nextBlockInfo = new ShapeChangeSignal {
+			shape = nextBlock.Shape,
+			isBot = this.IsBot,
+		};
+
+		SignalManager.Me.Fire<ShapeChangeSignal>(nextBlockInfo);
+	}
 
 	private void DisableShooting() {
 		// Disable the gun usage temporarily

@@ -19,8 +19,8 @@ public abstract class CharacterBehaviour : MonoBehaviour {
 	/// Indicates whether the attack can cause damage. This flag avoids double damage from animation.
 	/// </summary>
 	[SerializeField] protected bool canApplyDamage = false;
-	protected Transform startPos;
 #pragma warning restore IDE0044 // Make Field Read-only
+	// protected Transform startPos;
 
 	/// <summary>
 	/// Takes damage and reduces the health.
@@ -48,7 +48,7 @@ public abstract class CharacterBehaviour : MonoBehaviour {
 	/// Mono internal method called when the object is awakened.
 	/// </summary>
 	protected virtual void Awake() {
-		startPos = this.transform;
+		// startPos = this.transform;
 	}
 
 	/// <summary>

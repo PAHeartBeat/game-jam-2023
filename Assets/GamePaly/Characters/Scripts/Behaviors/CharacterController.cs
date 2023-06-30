@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using iPAHeartBeat.Core.Extensions;
+using iPAHeartBeat.Core.SignalSystem;
 using UnityEngine;
 
 public abstract class CharacterController : CharacterBehaviour, ICharacterController {
@@ -17,8 +18,7 @@ public abstract class CharacterController : CharacterBehaviour, ICharacterContro
 	[SerializeField] protected float moveSpeed = 5f;
 
 	private int _totalHurdleCount = 7;
-	public static int _botHurdleDestroyCount = 0;
-	public static int _playerHurdleDestroyCount = 0;
+	private int _obstacleDestroyCount = 0;
 
 	// Speed at which the player moves
 #pragma warning restore IDE0044 // Make field readonly
@@ -60,7 +60,10 @@ public abstract class CharacterController : CharacterBehaviour, ICharacterContro
 		var targetZ = this.transform.position.z + (this.moveSpeed * Time.smoothDeltaTime);
 		var targetPosition = new Vector3(this.transform.position.x, this.transform.position.y, targetZ);
 		this.transform.position = Vector3.Lerp(this.transform.position, targetPosition, this.smoothness);
-		// this.transform.Translate(Vector3.forward * this.moveSpeed * Time.smoothDeltaTime, Space.Self);
+
+		var newRotation = this.animator.gameObject.transform.rotation.eulerAngles;
+		newRotation.y = 0f;
+		this.animator.gameObject.transform.rotation = Quaternion.Euler(newRotation);
 
 		return true;
 	}
@@ -76,6 +79,7 @@ public abstract class CharacterController : CharacterBehaviour, ICharacterContro
 		}
 
 		this._isTriggerChecked = true;
+		this.FireResetMultiplierSignal();
 		this.StartSmashing(obstacle);
 	}
 #pragma warning restore IDE0051 // private member is unused.
@@ -110,33 +114,54 @@ public abstract class CharacterController : CharacterBehaviour, ICharacterContro
 		_ = this.StartCoroutine(this.DestroyObstacle(obstacle));
 	}
 
-	private IEnumerator DestroyObstacle(IObstacles obstacle) {
+	protected IEnumerator DestroyObstacle(IObstacles obstacle) {
 		yield return new WaitForSeconds(obstacle.DestroyTime);
 
-
-
-		obstacle.DestroyObstacle();
+		obstacle.DestroyObstacle(this.shapeShooter.IsBot);
 		this._isTriggerChecked = false;
 		this.IsSmashing = false;
-		if (shapeShooter._isBot) {
-			_botHurdleDestroyCount++;
-			if(_botHurdleDestroyCount != _totalHurdleCount) {
-				this.StartRun();
-			} else {
-				IsSmashing = true;
-				this.animator.SetTrigger(this.idleAnimation);
-			}
+		this._obstacleDestroyCount++;
+		if (this._obstacleDestroyCount >= this._totalHurdleCount) {
+			this.FireLevelEndSignal();
 		} else {
-			_playerHurdleDestroyCount++;
-			if (_playerHurdleDestroyCount != _totalHurdleCount) {
-				this.StartRun();
-			} else {
-				IsSmashing = true;
-				this.animator.SetTrigger(this.idleAnimation);
-			}
+			this.StartRun();
 		}
-		
-		this.transform.position = new Vector3(startPos.position.x, startPos.position.y, this.transform.position.z);
-		this.transform.rotation = Quaternion.Euler(startPos.rotation.eulerAngles.x, startPos.rotation.eulerAngles.y, this.transform.rotation.eulerAngles.z);
+
+		// 	if (shapeShooter.IsBot) {
+		// 		_botHurdleDestroyCount++;
+		// 		if (_botHurdleDestroyCount != _totalHurdleCount) {
+		// 			this.StartRun();
+		// 		} else {
+		// 			IsSmashing = true;
+		// 			this.animator.SetTrigger(this.idleAnimation);
+		// 		}
+		// 	} else {
+		// 		_playerHurdleDestroyCount++;
+		// 		if (_playerHurdleDestroyCount != _totalHurdleCount) {
+		// 			this.StartRun();
+		// 		} else {
+		// 			IsSmashing = true;
+		// 			this.animator.SetTrigger(this.idleAnimation);
+		// 		}
+		// 	}
+		//
+		// 	this.transform.position = new Vector3(startPos.position.x, startPos.position.y, this.transform.position.z);
+		// 	this.transform.rotation = Quaternion.Euler(startPos.rotation.eulerAngles.x, startPos.rotation.eulerAngles.y, this.transform.rotation.eulerAngles.z);
+	}
+
+	private void FireResetMultiplierSignal() {
+		var restInfo = new MultiplierResetSignal {
+			isBot = this.shapeShooter.IsBot
+		};
+
+		SignalManager.Me.Fire<MultiplierResetSignal>(restInfo);
+	}
+
+	private void FireLevelEndSignal() {
+		var restInfo = new LevelEndSignal {
+			isBot = this.shapeShooter.IsBot
+		};
+
+		SignalManager.Me.Fire<LevelEndSignal>(restInfo);
 	}
 }
