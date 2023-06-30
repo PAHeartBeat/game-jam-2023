@@ -9,7 +9,7 @@ public class TetrisShapeShooter : MonoBehaviour, IShapeShooter {
 	[SerializeField] private Transform _blocksParent;
 	private List<BlockController> _generatedBlocks;
 
-	[SerializeField] private bool _isBot;
+	public bool _isBot;
 
 	[SerializeField] private float _shootInterval = 2f;             // Interval between each shape shoot
 	[SerializeField] private float _shootForce = 10f;               // Force to apply to the shape when shooting
@@ -20,6 +20,7 @@ public class TetrisShapeShooter : MonoBehaviour, IShapeShooter {
 
 	private float _shootTimer = 0f;               // Timer for shooting shapes
 	private int _currentShapeIndex = 0;           // Index of the currently selected shape
+	[SerializeField] private int _botPercentageOfMakingRightDecision = 60;
 
 	public void RemoveBlockFromCache(BlockController obj) {
 		if (this._generatedBlocks.Contains(obj)) {
@@ -28,6 +29,14 @@ public class TetrisShapeShooter : MonoBehaviour, IShapeShooter {
 	}
 
 	public void ChangeShape() {
+
+		if (_isBot) {
+			var decisionIndex = Random.Range(0, 100);
+			if (decisionIndex < _botPercentageOfMakingRightDecision) {
+				return;
+			}
+		}
+
 		// Increase the current shape index
 		this._currentShapeIndex++;
 
@@ -64,7 +73,7 @@ public class TetrisShapeShooter : MonoBehaviour, IShapeShooter {
 		// Position and scale the shape at the cannon's position
 		block.transform.position = this._characterController.BulletInitPoint.position;
 		// Adjust the scale as needed
-		block.transform.localScale = new Vector3(0.5f, 0.5f, 0.5f);
+		block.transform.localScale = new Vector3(0.2f, 0.2f, 0.2f);
 
 		// Setup the block for it's behaviour
 		block.Setup(this, this._bulletLifetime);
@@ -80,7 +89,14 @@ public class TetrisShapeShooter : MonoBehaviour, IShapeShooter {
 
 		this.GetRandomShape();
 	}
+
 	public void RotateShape() {
+		if (_isBot) {
+			var decisionIndex = Random.Range(0, 100);
+			if (decisionIndex < _botPercentageOfMakingRightDecision) {
+				return;
+			}
+		}
 		for (int i = 0; i < this._generatedBlocks.Count; i++) {
 			this._generatedBlocks[i].RotateShape();
 		}
@@ -117,7 +133,7 @@ public class TetrisShapeShooter : MonoBehaviour, IShapeShooter {
 		}
 
 		// Check for input to change the currently selected shape
-		if (Input.GetButtonDown("Fire1") && !this._isBot) {
+		if (Input.GetButtonDown("Fire1") || this._isBot) {
 			this.ChangeShape();
 		}
 	}
