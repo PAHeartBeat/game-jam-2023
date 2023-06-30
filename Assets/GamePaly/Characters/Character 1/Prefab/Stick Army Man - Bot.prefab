@@ -70,6 +70,11 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 7587054969343661408, guid: 96781c5edec439f43994615013b93a77, type: 3}
   m_PrefabInstance: {fileID: 3036795984967063943}
   m_PrefabAsset: {fileID: 0}
+--- !u!95 &6129962814996205768 stripped
+Animator:
+  m_CorrespondingSourceObject: {fileID: 9166757530732890447, guid: 96781c5edec439f43994615013b93a77, type: 3}
+  m_PrefabInstance: {fileID: 3036795984967063943}
+  m_PrefabAsset: {fileID: 0}
 --- !u!114 &6717402521146830684 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 8583262598626965211, guid: 96781c5edec439f43994615013b93a77, type: 3}
@@ -98,7 +103,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ae08ec31f97392f4eab038e3fd63e4ab, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  animator: {fileID: 8885118771223866686}
+  animator: {fileID: 6129962814996205768}
   dieAnimation: Die
   idleAnimation: Idle
   canApplyDamage: 0
@@ -108,8 +113,3 @@ MonoBehaviour:
   smoothness: 0.5
   recoilDistance: 3
   moveSpeed: 5
---- !u!95 &8885118771223866686 stripped
-Animator:
-  m_CorrespondingSourceObject: {fileID: 5866666020415960249, guid: 96781c5edec439f43994615013b93a77, type: 3}
-  m_PrefabInstance: {fileID: 3036795984967063943}
-  m_PrefabAsset: {fileID: 0}
