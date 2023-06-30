@@ -6,6 +6,8 @@ using UnityEngine;
 public abstract class CharacterController : CharacterBehaviour, ICharacterController {
 #pragma warning disable IDE0044 // Make field readonly
 	[Header("Core Player information")]
+	[SerializeField] protected string runAnimationState = "Run";
+	[SerializeField] protected string smashAnimationState = "Smashing";
 	[SerializeField] protected ThirdPersonCamera thirdPersonCamera;
 	[SerializeField] protected Transform cannonTransform;            // Transform of the cannon
 	[SerializeField] protected TetrisShapeShooter shapeShooter;
@@ -15,10 +17,12 @@ public abstract class CharacterController : CharacterBehaviour, ICharacterContro
 #pragma warning restore IDE0044 // Make field readonly
 
 	public bool IsActive => !this.thirdPersonCamera.isCinematicView;
+	public bool IsSmashing { get; private set; }
 
 	public Transform BulletInitPoint => this.cannonTransform;
 
 	protected Transform trCache;
+	private bool _isTriggerChecked = false;
 
 	public void ApplyRecoil() {
 		// Calculate the recoil direction
@@ -38,23 +42,34 @@ public abstract class CharacterController : CharacterBehaviour, ICharacterContro
 		}
 
 		this.animator.Play("Idle");
-		StartCoroutine(StartWalkAnimation());
+		_ = this.StartCoroutine(this.StartRunOnceActive());
 	}
 
-	IEnumerator StartWalkAnimation() {
-		yield return new WaitUntil(()=>IsActive);
-		this.animator.Play("Run");
-	}
-
-	protected virtual void Update() {
-		if (this.thirdPersonCamera.isCinematicView)
-			return;
+	protected virtual bool Update() {
+		if (!this.IsActive || this.IsSmashing)
+			return false;
 
 		// Move the player automatically
 		var targetZ = this.transform.position.z + (this.moveSpeed * Time.smoothDeltaTime);
 		var targetPosition = new Vector3(this.transform.position.x, this.transform.position.y, targetZ);
 		this.transform.position = Vector3.Lerp(this.transform.position, targetPosition, this.smoothness);
 		// this.transform.Translate(Vector3.forward * this.moveSpeed * Time.smoothDeltaTime, Space.Self);
+
+		return true;
+	}
+
+	protected override void OnTriggerEnter(Collider other) {
+		base.OnTriggerEnter(other);
+		Debug.Log($"Trigger happened in {this.name} with {other?.name ?? ""}");
+		if (this._isTriggerChecked) return;
+
+		var obstacle = other.GetComponentInParent<IObstacles>();
+		if (obstacle == null) {
+			return;
+		}
+
+		this._isTriggerChecked = true;
+		this.StartSmashing(obstacle);
 	}
 #pragma warning restore IDE0051 // private member is unused.
 	#endregion
@@ -72,5 +87,27 @@ public abstract class CharacterController : CharacterBehaviour, ICharacterContro
 		return this.thirdPersonCamera.IsNull()
 			? throw new Exception("Camera Not Found so Can't update target to follow Camera")
 			: true;
+	}
+
+	private void StartRun()
+		=> this.animator.Play(this.runAnimationState);
+
+	private IEnumerator StartRunOnceActive() {
+		yield return new WaitUntil(() => this.IsActive);
+		this.StartRun();
+	}
+
+	private void StartSmashing(IObstacles obstacle) {
+		this.IsSmashing = true;
+		this.animator.Play(this.smashAnimationState);
+		_ = this.StartCoroutine(this.DestroyObstacle(obstacle));
+	}
+
+	private IEnumerator DestroyObstacle(IObstacles obstacle) {
+		yield return new WaitForSeconds(obstacle.DestroyTime);
+		obstacle.DestroyObstacle();
+		this._isTriggerChecked = false;
+		this.IsSmashing = false;
+		this.StartRun();
 	}
 }

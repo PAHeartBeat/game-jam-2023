@@ -11,7 +11,8 @@ GameObject:
   - component: {fileID: 5041675553767827365}
   - component: {fileID: 663225913765632533}
   - component: {fileID: 1969033299739427482}
-  m_Layer: 0
+  - component: {fileID: 4230559458542841733}
+  m_Layer: 8
   m_Name: Shape
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -83,6 +84,20 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
+--- !u!64 &4230559458542841733
+MeshCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 97363117046753303}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 1
+  m_Enabled: 1
+  serializedVersion: 4
+  m_Convex: 1
+  m_CookingOptions: 30
+  m_Mesh: {fileID: 6606501483488557099, guid: 4753beb66f224ef4aa238ed13d7cc457, type: 3}
 --- !u!1 &1164975692661698256
 GameObject:
   m_ObjectHideFlags: 0
@@ -93,7 +108,8 @@ GameObject:
   m_Component:
   - component: {fileID: 4490774594759121955}
   - component: {fileID: 9115346799090739163}
-  m_Layer: 0
+  - component: {fileID: 748195547802928462}
+  m_Layer: 8
   m_Name: Obs_I_0
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -131,7 +147,24 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _shape: 4
   _angle: 0
+  _destroyTime: 3
   _reward: 10
+--- !u!54 &748195547802928462
+Rigidbody:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1164975692661698256}
+  serializedVersion: 2
+  m_Mass: 1
+  m_Drag: 0
+  m_AngularDrag: 0.05
+  m_UseGravity: 0
+  m_IsKinematic: 1
+  m_Interpolate: 0
+  m_Constraints: 54
+  m_CollisionDetection: 0
 --- !u!1 &3648701985834060545
 GameObject:
   m_ObjectHideFlags: 0
@@ -143,7 +176,8 @@ GameObject:
   - component: {fileID: 2079105659399387634}
   - component: {fileID: 5861114901724897430}
   - component: {fileID: 1698122710777178731}
-  m_Layer: 0
+  - component: {fileID: 1329358362}
+  m_Layer: 8
   m_Name: Mesh
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -215,3 +249,16 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
+--- !u!65 &1329358362
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3648701985834060545}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 1
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Size: {x: 1, y: 1, z: 1}
+  m_Center: {x: 0, y: 0, z: 0}

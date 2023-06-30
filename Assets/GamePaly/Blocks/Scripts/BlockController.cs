@@ -23,8 +23,14 @@ public class BlockController : MonoBehaviour, IBlockController {
 	public void AddForce(Vector3 force, ForceMode mode)
 		=> this._rigidbody.AddForce(force, mode);
 
-	public void KillOnTrigger() {
-		Destroy(this);
+	public void KillOnTrigger()
+		=> Destroy(this);
+
+	public void RotateShape() {
+		this.transform.Rotate(Vector3.right, 90f, Space.Self);
+		this._angle += 90;
+		if (this._angle >= 360)
+			this._angle %= 360;
 	}
 
 #pragma warning disable IDE0051 // private member is unused.
@@ -40,15 +46,17 @@ public class BlockController : MonoBehaviour, IBlockController {
 		this._controller?.RemoveBlockFromCache(this);
 		Destroy(this.gameObject);
 	}
-
+	bool _isTriggerChecked = false;
 	private void OnTriggerEnter(Collider other) {
-		var x = other.GetComponent<IObstacles>();
-		if (x == null) {
+		if (this._isTriggerChecked) return;
+
+		var obstacle = other.GetComponentInParent<IObstacles>();
+		if (obstacle == null) {
 			return;
 		}
 
-		x.CheckShape(this);
-
+		this._isTriggerChecked = true;
+		obstacle.CheckShape(this);
 	}
 #pragma warning restore IDE0051 // private member is unused.
 }

@@ -107,6 +107,8 @@ MonoBehaviour:
   dieAnimation: Die
   idleAnimation: Idle
   canApplyDamage: 0
+  runAnimationState: Run
+  smashAnimationState: Idle
   thirdPersonCamera: {fileID: 0}
   cannonTransform: {fileID: 4858961304974265575}
   shapeShooter: {fileID: 6717402521146830684}
