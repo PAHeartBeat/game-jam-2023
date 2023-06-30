@@ -1,4 +1,4 @@
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -44,7 +44,6 @@ public class TetrisShapeShooter : MonoBehaviour, IShapeShooter {
 		var randomIndex = Random.Range(0, this._blocks.Length);
 		if (randomIndex < 0 || randomIndex >= this._blocks.Length) {
 			return;
-		}
 
 		this._currentShapeIndex = randomIndex;
 
