@@ -1,11 +1,17 @@
 
 using UnityEngine;
 
-public class BlockController : MonoBehaviour {
+public class BlockController : MonoBehaviour, IBlockController {
 #pragma warning disable IDE0044 // Make field readonly
 	[SerializeField] private Rigidbody _rigidbody;
+	[SerializeField] private ObstacleShapes _shape;
+	[SerializeField] private int _angle;
 	// [SerializeField] private TetrisShapeRotation _rotation;
 #pragma warning restore IDE0044 // Make field readonly
+
+	public ObstacleShapes Shape => this._shape;
+	public int Angle => this._angle;
+
 	private IShapeShooter _controller;
 
 	public void Setup(IShapeShooter controller, float lifeTime) {
@@ -16,6 +22,10 @@ public class BlockController : MonoBehaviour {
 
 	public void AddForce(Vector3 force, ForceMode mode)
 		=> this._rigidbody.AddForce(force, mode);
+
+	public void KillOnTrigger() {
+		Destroy(this);
+	}
 
 #pragma warning disable IDE0051 // private member is unused.
 	// Start is called before the first frame update
@@ -29,6 +39,16 @@ public class BlockController : MonoBehaviour {
 	private void OnDestroy() {
 		this._controller?.RemoveBlockFromCache(this);
 		Destroy(this.gameObject);
+	}
+
+	private void OnTriggerEnter(Collider other) {
+		var x = other.GetComponent<IObstacles>();
+		if (x == null) {
+			return;
+		}
+
+		x.CheckShape(this);
+
 	}
 #pragma warning restore IDE0051 // private member is unused.
 }

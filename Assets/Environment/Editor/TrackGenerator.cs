@@ -111,7 +111,7 @@ public class TrackGenerator : EditorWindow {
 			obstaclePosition.Add(z);
 		}
 		var count = obstaclePosition.Count;
-		obstaclePosition.RemoveAt(count-1);
+		obstaclePosition.RemoveAt(count - 1);
 
 		var obstacleTypeIndex = -1;
 
@@ -138,7 +138,7 @@ public class TrackGenerator : EditorWindow {
 	private void SavePrefab() {
 		if (_environmentPrefab == null) {
 			// Save the environment as a prefab
-			string savePath = EditorUtility.SaveFilePanelInProject("Save Environment Prefab", "Environment", "prefab", "Save Environment Prefab");
+			var savePath = EditorUtility.SaveFilePanelInProject("Save Environment Prefab", $"Level {_levelNumber}", "prefab", "Save Environment Prefab");
 			if (savePath.Length > 0) {
 				PrefabUtility.SaveAsPrefabAsset(_environment, savePath);
 			}
