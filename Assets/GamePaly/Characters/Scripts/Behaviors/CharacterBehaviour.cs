@@ -19,6 +19,7 @@ public abstract class CharacterBehaviour : MonoBehaviour {
 	/// Indicates whether the attack can cause damage. This flag avoids double damage from animation.
 	/// </summary>
 	[SerializeField] protected bool canApplyDamage = false;
+	protected Transform startPos;
 #pragma warning restore IDE0044 // Make Field Read-only
 
 	/// <summary>
@@ -46,7 +47,9 @@ public abstract class CharacterBehaviour : MonoBehaviour {
 	/// <summary>
 	/// Mono internal method called when the object is awakened.
 	/// </summary>
-	protected virtual void Awake() { }
+	protected virtual void Awake() {
+		startPos = this.transform;
+	}
 
 	/// <summary>
 	/// Mono internal method called when the object is started.
@@ -57,7 +60,7 @@ public abstract class CharacterBehaviour : MonoBehaviour {
 	/// Mono internal method called when the object is enabled.
 	/// </summary>
 	protected virtual void OnEnable()
-		=> this.animator?.Play(this.idleAnimation);
+		=> this.animator?.SetTrigger(this.idleAnimation);
 
 	/// <summary>
 	/// Mono internal method called when the object is disabled.

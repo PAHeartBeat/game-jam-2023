@@ -14,12 +14,16 @@ public class PlayerController : CharacterController, IPlayerController {
 	protected override bool Update() {
 		if (!base.Update()) return false;
 
+		Vector3 newRotation = this.animator.gameObject.transform.rotation.eulerAngles;
+		newRotation.y = 0f;
+		this.animator.gameObject.transform.rotation = Quaternion.Euler(newRotation);
+
 		// Check for input to change the currently selected shape
-		if (Input.GetButtonDown("Fire1")) {
+		if (Input.GetButtonDown("Fire1") || shapeShooter._isBot) {
 			this.shapeShooter.ChangeShape();
 		}
 
-		if (Input.GetKeyDown(KeyCode.Space)) {
+		if (Input.GetButtonDown("Fire1") || shapeShooter._isBot) {
 			this.shapeShooter.RotateShape();
 		}
 

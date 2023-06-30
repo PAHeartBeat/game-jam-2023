@@ -1,5 +1,6 @@
 using System;
 using System.Collections;
+using System.Collections.Generic;
 using iPAHeartBeat.Core.Extensions;
 using UnityEngine;
 
@@ -7,13 +8,19 @@ public abstract class CharacterController : CharacterBehaviour, ICharacterContro
 #pragma warning disable IDE0044 // Make field readonly
 	[Header("Core Player information")]
 	[SerializeField] protected string runAnimationState = "Run";
-	[SerializeField] protected string smashAnimationState = "Smashing";
+	[SerializeField] protected string smashAnimationState = "Punch";
 	[SerializeField] protected ThirdPersonCamera thirdPersonCamera;
 	[SerializeField] protected Transform cannonTransform;            // Transform of the cannon
 	[SerializeField] protected TetrisShapeShooter shapeShooter;
 	[SerializeField] protected float smoothness = 0.5f;
 	[SerializeField] protected float recoilDistance = 3f;            // Distance the player is pushed back when the cannon fires
-	[SerializeField] protected float moveSpeed = 5f;                  // Speed at which the player moves
+	[SerializeField] protected float moveSpeed = 5f;
+
+	private int _totalHurdleCount = 7;
+	public static int _botHurdleDestroyCount = 0;
+	public static int _playerHurdleDestroyCount = 0;
+
+	// Speed at which the player moves
 #pragma warning restore IDE0044 // Make field readonly
 
 	public bool IsActive => !this.thirdPersonCamera.isCinematicView;
@@ -41,7 +48,7 @@ public abstract class CharacterController : CharacterBehaviour, ICharacterContro
 			_ = this.TryToGetCameraController();
 		}
 
-		this.animator.Play("Idle");
+		this.animator.SetTrigger("Idle");
 		_ = this.StartCoroutine(this.StartRunOnceActive());
 	}
 
@@ -90,7 +97,7 @@ public abstract class CharacterController : CharacterBehaviour, ICharacterContro
 	}
 
 	private void StartRun()
-		=> this.animator.Play(this.runAnimationState);
+		=> this.animator.SetTrigger(this.runAnimationState);
 
 	private IEnumerator StartRunOnceActive() {
 		yield return new WaitUntil(() => this.IsActive);
@@ -99,15 +106,37 @@ public abstract class CharacterController : CharacterBehaviour, ICharacterContro
 
 	private void StartSmashing(IObstacles obstacle) {
 		this.IsSmashing = true;
-		this.animator.Play(this.smashAnimationState);
+		this.animator.SetTrigger(this.smashAnimationState);
 		_ = this.StartCoroutine(this.DestroyObstacle(obstacle));
 	}
 
 	private IEnumerator DestroyObstacle(IObstacles obstacle) {
 		yield return new WaitForSeconds(obstacle.DestroyTime);
+
+
+
 		obstacle.DestroyObstacle();
 		this._isTriggerChecked = false;
 		this.IsSmashing = false;
-		this.StartRun();
+		if (shapeShooter._isBot) {
+			_botHurdleDestroyCount++;
+			if(_botHurdleDestroyCount != _totalHurdleCount) {
+				this.StartRun();
+			} else {
+				IsSmashing = true;
+				this.animator.SetTrigger(this.idleAnimation);
+			}
+		} else {
+			_playerHurdleDestroyCount++;
+			if (_playerHurdleDestroyCount != _totalHurdleCount) {
+				this.StartRun();
+			} else {
+				IsSmashing = true;
+				this.animator.SetTrigger(this.idleAnimation);
+			}
+		}
+		
+		this.transform.position = new Vector3(startPos.position.x, startPos.position.y, this.transform.position.z);
+		this.transform.rotation = Quaternion.Euler(startPos.rotation.eulerAngles.x, startPos.rotation.eulerAngles.y, this.transform.rotation.eulerAngles.z);
 	}
 }

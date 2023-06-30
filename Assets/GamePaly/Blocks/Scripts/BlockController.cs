@@ -27,7 +27,7 @@ public class BlockController : MonoBehaviour, IBlockController {
 		=> Destroy(this);
 
 	public void RotateShape() {
-		this.transform.Rotate(Vector3.right, 90f, Space.Self);
+		this.transform.Rotate(Vector3.back, 90f, Space.Self);
 		this._angle += 90;
 		if (this._angle >= 360)
 			this._angle %= 360;
