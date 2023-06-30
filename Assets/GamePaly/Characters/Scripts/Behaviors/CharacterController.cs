@@ -13,7 +13,7 @@ public abstract class CharacterController : CharacterBehaviour, ICharacterContro
 	[SerializeField] protected float moveSpeed = 5f;                  // Speed at which the player moves
 #pragma warning restore IDE0044 // Make field readonly
 
-	public bool IsActive => !this.thirdPersonCamera.isCinematicView;
+	public bool IsActive => true; // !this.thirdPersonCamera.isCinematicView;
 
 	public Transform BulletInitPoint => this.cannonTransform;
 
@@ -35,17 +35,20 @@ public abstract class CharacterController : CharacterBehaviour, ICharacterContro
 		if (this.thirdPersonCamera.IsNull()) {
 			_ = this.TryToGetCameraController();
 		}
+
+		this.animator.Play("Idle");
+		this.animator.Play("Run");
 	}
 
 	protected virtual void Update() {
-		if (this.thirdPersonCamera.isCinematicView)
-			return;
+		// if (this.thirdPersonCamera.isCinematicView)
+		// 	return;
 
 		// Move the player automatically
-		// var targetZ = this.trCache.position.z + (this.moveSpeed * Time.smoothDeltaTime);
-		// var targetPosition = new Vector3(this.trCache.position.x, this.trCache.position.y, targetZ);
-		// this.trCache.position = Vector3.Lerp(this.trCache.position, targetPosition, this.smoothness);
-		this.transform.Translate(Vector3.forward * this.moveSpeed * Time.smoothDeltaTime, Space.Self);
+		var targetZ = this.transform.position.z + (this.moveSpeed * Time.smoothDeltaTime);
+		var targetPosition = new Vector3(this.transform.position.x, this.transform.position.y, targetZ);
+		this.transform.position = Vector3.Lerp(this.transform.position, targetPosition, this.smoothness);
+		// this.transform.Translate(Vector3.forward * this.moveSpeed * Time.smoothDeltaTime, Space.Self);
 	}
 #pragma warning restore IDE0051 // private member is unused.
 	#endregion

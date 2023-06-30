@@ -44,7 +44,7 @@ public class TetrisShapeShooter : MonoBehaviour, IShapeShooter {
 		var randomIndex = Random.Range(0, this._blocks.Length);
 		if (randomIndex < 0 || randomIndex >= this._blocks.Length) {
 			return;
-
+		}
 		this._currentShapeIndex = randomIndex;
 
 		// Print the selected shape index
@@ -52,6 +52,9 @@ public class TetrisShapeShooter : MonoBehaviour, IShapeShooter {
 	}
 
 	public void ShootShape() {
+		if (this._currentShapeIndex < 0 || this._currentShapeIndex >= this._blocks.Length) {
+			return;
+		}
 		var shape = this._blocks[this._currentShapeIndex];
 
 		// Create a parent object for the shape

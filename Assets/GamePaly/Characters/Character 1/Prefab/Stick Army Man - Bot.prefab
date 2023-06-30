@@ -1,0 +1,115 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1001 &3036795984967063943
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: 859742105658441020, guid: 96781c5edec439f43994615013b93a77, type: 3}
+      propertyPath: m_RootOrder
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 859742105658441020, guid: 96781c5edec439f43994615013b93a77, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 859742105658441020, guid: 96781c5edec439f43994615013b93a77, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 859742105658441020, guid: 96781c5edec439f43994615013b93a77, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 859742105658441020, guid: 96781c5edec439f43994615013b93a77, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 859742105658441020, guid: 96781c5edec439f43994615013b93a77, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 859742105658441020, guid: 96781c5edec439f43994615013b93a77, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 859742105658441020, guid: 96781c5edec439f43994615013b93a77, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 859742105658441020, guid: 96781c5edec439f43994615013b93a77, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 859742105658441020, guid: 96781c5edec439f43994615013b93a77, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 859742105658441020, guid: 96781c5edec439f43994615013b93a77, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4971018890325349222, guid: 96781c5edec439f43994615013b93a77, type: 3}
+      propertyPath: m_Name
+      value: Stick Army Man - Bot
+      objectReference: {fileID: 0}
+    - target: {fileID: 8583262598626965211, guid: 96781c5edec439f43994615013b93a77, type: 3}
+      propertyPath: _isBot
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8583262598626965211, guid: 96781c5edec439f43994615013b93a77, type: 3}
+      propertyPath: _characterController
+      value: 
+      objectReference: {fileID: 8446212589050166459}
+    m_RemovedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: 96781c5edec439f43994615013b93a77, type: 3}
+--- !u!4 &4858961304974265575 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 7587054969343661408, guid: 96781c5edec439f43994615013b93a77, type: 3}
+  m_PrefabInstance: {fileID: 3036795984967063943}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &6717402521146830684 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 8583262598626965211, guid: 96781c5edec439f43994615013b93a77, type: 3}
+  m_PrefabInstance: {fileID: 3036795984967063943}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7987211506432477921}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8ed196e1bdc36064783eff978623d669, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!1 &7987211506432477921 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 4971018890325349222, guid: 96781c5edec439f43994615013b93a77, type: 3}
+  m_PrefabInstance: {fileID: 3036795984967063943}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &8446212589050166459
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7987211506432477921}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ae08ec31f97392f4eab038e3fd63e4ab, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  animator: {fileID: 8885118771223866686}
+  dieAnimation: Die
+  idleAnimation: Idle
+  canApplyDamage: 0
+  thirdPersonCamera: {fileID: 0}
+  cannonTransform: {fileID: 4858961304974265575}
+  shapeShooter: {fileID: 6717402521146830684}
+  smoothness: 0.5
+  recoilDistance: 3
+  moveSpeed: 5
+--- !u!95 &8885118771223866686 stripped
+Animator:
+  m_CorrespondingSourceObject: {fileID: 5866666020415960249, guid: 96781c5edec439f43994615013b93a77, type: 3}
+  m_PrefabInstance: {fileID: 3036795984967063943}
+  m_PrefabAsset: {fileID: 0}
