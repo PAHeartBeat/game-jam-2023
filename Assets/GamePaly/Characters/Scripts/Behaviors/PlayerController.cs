@@ -1,3 +1,5 @@
+using UnityEngine;
+
 public class PlayerController : CharacterController, IPlayerController {
 	public override void Die() { }
 
@@ -9,4 +11,18 @@ public class PlayerController : CharacterController, IPlayerController {
 		;
 	}
 
+	protected override bool Update() {
+		if (!base.Update()) return false;
+
+		// Check for input to change the currently selected shape
+		if (Input.GetButtonDown("Fire1")) {
+			this.shapeShooter.ChangeShape();
+		}
+
+		if (Input.GetKeyDown(KeyCode.Space)) {
+			this.shapeShooter.RotateShape();
+		}
+
+		return false;
+	}
 }

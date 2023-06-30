@@ -80,6 +80,11 @@ public class TetrisShapeShooter : MonoBehaviour, IShapeShooter {
 
 		this.GetRandomShape();
 	}
+	public void RotateShape() {
+		for (int i = 0; i < this._generatedBlocks.Count; i++) {
+			this._generatedBlocks[i].RotateShape();
+		}
+	}
 
 	#region  Mono Action
 #pragma warning disable IDE0051 // private member is unused.
@@ -89,10 +94,12 @@ public class TetrisShapeShooter : MonoBehaviour, IShapeShooter {
 		if (null != dummy) {
 			this._blocksParent = dummy?.transform ?? null;
 		}
+
+		this.GetRandomShape();
 	}
 
 	private void Update() {
-		if (!this._characterController.IsActive)
+		if (!this._characterController.IsActive || this._characterController.IsSmashing)
 			return;
 
 		// Update the shoot timer
