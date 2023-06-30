@@ -5,12 +5,36 @@ public class BotController : CharacterController, IBotController {
 
 	public override void TakeDamage(float damagePoint) { }
 
-	protected override bool Update() {
+	[SerializeField] private int _botPercentageOfMakingRightDecision = 60;
 
-		Vector3 newRotation = this.animator.gameObject.transform.rotation.eulerAngles;
-		newRotation.y = 0f;
-		this.animator.gameObject.transform.rotation = Quaternion.Euler(newRotation);
-
-		return base.Update();
+	protected override void Start() {
+		base.Start();
+		this.InvokeRepeating("ChangeBotShape", 3, 0.2f);
+		this.InvokeRepeating("RotationByBot", 3, 0.2f);
 	}
+
+	private void OnDestroy() {
+		this.CancelInvoke("ChangeBotShape");
+		this.CancelInvoke("RotationByBot");
+	}
+
+	private void RotationByBot() {
+		var decisionIndex = Random.Range(0, 100);
+		if (decisionIndex < this._botPercentageOfMakingRightDecision) {
+			return;
+		}
+
+		this.shapeShooter.RotateShape();
+	}
+
+	private void ChangeBotShape() {
+		var decisionIndex = Random.Range(0, 100);
+		if (decisionIndex < this._botPercentageOfMakingRightDecision) {
+			return;
+		}
+
+		this.shapeShooter.ChangeShape();
+	}
+
+
 }

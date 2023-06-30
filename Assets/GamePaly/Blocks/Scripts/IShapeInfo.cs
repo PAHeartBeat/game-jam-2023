@@ -1,4 +1,4 @@
 public interface IShapeInfo {
-	ObstacleShapes Shape { get; }
+	ShapeStyles Shape { get; }
 	int Angle { get; }
 }
