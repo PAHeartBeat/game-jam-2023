@@ -11,10 +11,11 @@ public class TetrisShapeShooter : MonoBehaviour
     public float bulletLifetime = 5f;            // Time in seconds before the bullet is destroyed
     public float recoilDistance = 3f;            // Distance the player is pushed back when the cannon fires
     public float moveSpeed = 5f;                  // Speed at which the player moves
-    public ThirdPersonCamera thirdPersonCamera;           
 
     [SerializeField] private float smoothness = 0.5f;
-    private float shootTimer = 0f;               // Timer for shooting shapes
+	[SerializeField] private Animator animator;
+
+	private float shootTimer = 0f;               // Timer for shooting shapes
     private bool canUseGun = true;               // Flag to indicate if the player can use the gun
     private int currentShapeIndex = 0;           // Index of the currently selected shape
 
@@ -29,40 +30,38 @@ public class TetrisShapeShooter : MonoBehaviour
         new Vector2Int[] { new Vector2Int(0, 0), new Vector2Int(0, -1), new Vector2Int(0, -2), new Vector2Int(-1, -2) }  // T shape
     };
 
-    private void Update()
-    {
-        if (thirdPersonCamera.isCinematicView)
-            return;
-        // Update the shoot timer
-        shootTimer += Time.deltaTime;
+	[SerializeField] private float minMovementSpeed = 0.1f; // Minimum movement speed to trigger the "Walk" animation
+	private Vector3 targetPosition;
 
-        // Check if it's time to shoot a shape
-        if (shootTimer >= shootInterval)
-        {
-            // Shoot a random Tetris shape
-            if (canUseGun)
-            {
-                ShootTetrisShape();
-            }
+	private void Start() {
+			animator.SetTrigger("Run");
+	}
 
-            // Reset the shoot timer
-            shootTimer = 0f;
-        }
+	private void Update() {
+		shootTimer += Time.deltaTime;
 
-        // Move the player automatically
-        float targetZ = transform.position.z + moveSpeed * Time.deltaTime;
-        Vector3 targetPosition = new Vector3(transform.position.x, transform.position.y, targetZ);
-        transform.position = Vector3.Lerp(transform.position, targetPosition, smoothness);
+		if (shootTimer >= shootInterval) {
+			if (canUseGun) {
+				ShootTetrisShape();
+			}
+			shootTimer = 0f;
+		}
 
+		// Calculate the movement direction based on the character's forward direction
+		Vector3 movementDirection = transform.forward;
 
-        // Check for input to change the currently selected shape
-        if (Input.GetButtonDown("Fire1"))
-        {
-            SelectNextShape();
-        }
-    }
+		// Calculate the target position based on the movement direction and speed
+		Vector3 targetPosition = transform.position + movementDirection * moveSpeed * Time.deltaTime;
 
-    private void SelectNextShape()
+		// Move the character to the target position
+		transform.position = Vector3.Lerp(transform.position, targetPosition, smoothness);
+
+		if (Input.GetButtonDown("Fire1")) {
+			SelectNextShape();
+		}
+	}
+
+	private void SelectNextShape()
     {
         // Increase the current shape index
         currentShapeIndex++;
