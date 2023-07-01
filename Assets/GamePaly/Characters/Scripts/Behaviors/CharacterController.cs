@@ -15,6 +15,7 @@ public abstract class CharacterController : CharacterBehaviour, ICharacterContro
 	[SerializeField] protected float smoothness = 0.5f;
 	[SerializeField] protected float recoilDistance = 3f;            // Distance the player is pushed back when the cannon fires
 	[SerializeField] protected float moveSpeed = 5f;
+	[SerializeField] protected GameObject winningText,lossText,drawText;
 
 	private int _totalHurdleCount = 7;
 	public static int _botHurdleDestroyCount = 0;
@@ -30,6 +31,7 @@ public abstract class CharacterController : CharacterBehaviour, ICharacterContro
 
 	protected Transform trCache;
 	private bool _isTriggerChecked = false;
+	public static string winner;
 
 	public void ApplyRecoil() {
 		// Calculate the recoil direction
@@ -64,14 +66,39 @@ public abstract class CharacterController : CharacterBehaviour, ICharacterContro
 
 		return true;
 	}
+	IEnumerator ChangeScene() {
+		yield return new WaitForSeconds(3f);
+		UnityEngine.SceneManagement.SceneManager.LoadScene("Menu");
+	}
 
 	protected override void OnTriggerEnter(Collider other) {
 		base.OnTriggerEnter(other);
 		Debug.Log($"Trigger happened in {this.name} with {other?.name ?? ""}");
+
+		if (other.name.Equals("EndPoint")) {
+			IsSmashing = true;
+			this.animator.SetTrigger(this.idleAnimation);
+				if (string.IsNullOrEmpty(winner)) {
+				{
+					winner = "Winner";
+				}
+				if (!shapeShooter._isBot) {
+					{
+						winningText.gameObject.SetActive(!string.IsNullOrEmpty(winner));
+						lossText.gameObject.SetActive(string.IsNullOrEmpty(winner));
+					}
+				}
+			}
+			StartCoroutine(ChangeScene());
+
+		}
+
 		if (this._isTriggerChecked) return;
 
 		var obstacle = other.GetComponentInParent<IObstacles>();
+
 		if (obstacle == null) {
+			AudioManager.Instance.PlaySFX("negative_beeps-6008");
 			return;
 		}
 
@@ -107,34 +134,27 @@ public abstract class CharacterController : CharacterBehaviour, ICharacterContro
 	private void StartSmashing(IObstacles obstacle) {
 		this.IsSmashing = true;
 		this.animator.SetTrigger(this.smashAnimationState);
+
 		_ = this.StartCoroutine(this.DestroyObstacle(obstacle));
+		_ = this.StartCoroutine(this.PlaySmash());
+
+	}
+	private IEnumerator PlaySmash() {
+
+		while (IsSmashing) {
+			AudioManager.Instance.PlaySFX("punch-140236");
+			yield return new WaitForSeconds(0.7f);
+		}
 	}
 
 	private IEnumerator DestroyObstacle(IObstacles obstacle) {
 		yield return new WaitForSeconds(obstacle.DestroyTime);
-
-
-
 		obstacle.DestroyObstacle();
+		AudioManager.Instance.PlaySFX("rock-destroy-6409");
+
 		this._isTriggerChecked = false;
 		this.IsSmashing = false;
-		if (shapeShooter._isBot) {
-			_botHurdleDestroyCount++;
-			if(_botHurdleDestroyCount != _totalHurdleCount) {
-				this.StartRun();
-			} else {
-				IsSmashing = true;
-				this.animator.SetTrigger(this.idleAnimation);
-			}
-		} else {
-			_playerHurdleDestroyCount++;
-			if (_playerHurdleDestroyCount != _totalHurdleCount) {
-				this.StartRun();
-			} else {
-				IsSmashing = true;
-				this.animator.SetTrigger(this.idleAnimation);
-			}
-		}
+		this.StartRun();
 		
 		this.transform.position = new Vector3(startPos.position.x, startPos.position.y, this.transform.position.z);
 		this.transform.rotation = Quaternion.Euler(startPos.rotation.eulerAngles.x, startPos.rotation.eulerAngles.y, this.transform.rotation.eulerAngles.z);
