@@ -10,8 +10,8 @@ public class ShapeDropHandler : MonoBehaviour,IDropHandler
 
 	public void OnDrop(PointerEventData eventData) {
 		var distance = Vector3.Distance(eventData.pointerDrag.transform.position, cannonTransform.position);
-		//if (eventData.pointerDrag != null && distance <= this.maxDistance) {
-		if(eventData.pointerDrag.transform.gameObject.name == "Image") { 
+		if (eventData.pointerDrag != null && distance <= this.maxDistance) {
+			//if(eventData.pointerDrag.transform.gameObject.name == "Image") { 
 			// The dropped item is within the maximum distance from the cannon object
 			Debug.Log("Dropped within the maximum distance from the cannon!");
 			// Add your desired code logic here for when the item is dropped within the distance

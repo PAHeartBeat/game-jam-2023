@@ -847,7 +847,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   cannonTransform: {fileID: 1292135067}
-  maxDistance: 2
+  maxDistance: 4
 --- !u!114 &1292135069
 MonoBehaviour:
   m_ObjectHideFlags: 0

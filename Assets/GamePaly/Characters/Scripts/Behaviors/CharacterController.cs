@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using iPAHeartBeat.Core.Extensions;
 using UnityEngine;
 
@@ -66,9 +67,19 @@ public abstract class CharacterController : CharacterBehaviour, ICharacterContro
 
 		return true;
 	}
+
 	IEnumerator ChangeScene() {
 		yield return new WaitForSeconds(3f);
+		winner = null;
 		UnityEngine.SceneManagement.SceneManager.LoadScene("Menu");
+	}
+
+	[SerializeField] private float hurdleDetectionDistance = 5f; // Maximum distance to detect hurdles
+	[SerializeField] private List<GameObject> objects; // Tag assigned to the hurdles
+
+
+	public bool IsHurdleNear() {
+		return objects.Any(obj => obj != null && Vector3.Distance(transform.position, obj.transform.position) <= hurdleDetectionDistance);
 	}
 
 	protected override void OnTriggerEnter(Collider other) {
@@ -86,10 +97,10 @@ public abstract class CharacterController : CharacterBehaviour, ICharacterContro
 					{
 						winningText.gameObject.SetActive(!string.IsNullOrEmpty(winner));
 						lossText.gameObject.SetActive(string.IsNullOrEmpty(winner));
+						StartCoroutine(ChangeScene());
 					}
 				}
 			}
-			StartCoroutine(ChangeScene());
 
 		}
 

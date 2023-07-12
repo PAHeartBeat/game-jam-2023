@@ -97,7 +97,7 @@ public class TetrisShapeShooter : MonoBehaviour, IShapeShooter {
 		// Disable Shooting while recoil Happens.
 		this.DisableShooting();
 
-		this.GetRandomShape();
+		//this.GetRandomShape();
 	}
 
 	public void RotateShape() {
@@ -134,28 +134,61 @@ public class TetrisShapeShooter : MonoBehaviour, IShapeShooter {
 	private Vector3 _originalScale; // Store the original scale of the cannon thread
 
 	private void Update() {
-		if (!this._characterController.IsActive || this._characterController.IsSmashing)
+		if (!this._characterController.IsActive)
 			return;
 
-		// Update the shoot timer
-		this._shootTimer += Time.smoothDeltaTime;
-
-		// Check if it's time to shoot a shape
-		if (this._shootTimer >= this._shootInterval) {
-			// Shoot a random Tetris shape
-			if (this._canUseGun) {
-				this.ShootShape();
+		if (this._generatedBlocks.Count == 0) {
+			// Check for input to change the currently selected shape
+			if (Input.GetButtonDown("Fire1") || this._isBot) {
+				this.ChangeShape();
 			}
 
-			// Reset the shoot timer
-			this._shootTimer = 0f;
+			// Update the shoot timer
+			this._shootTimer += Time.smoothDeltaTime;
+
+			// Check if it's time to shoot a shape
+			if (this._shootTimer >= this._shootInterval) {
+				// Shoot a random Tetris shape if no hurdle is near
+				if (this._canUseGun && !_characterController.IsHurdleNear()) {
+					// Shoot the shape
+					this.ShootShape();
+					StartCoroutine(WaitForBulletToDestroyCoroutine());
+				} else {
+					Debug.LogError("Hurdle is near");
+				}
+
+				// Reset the shoot timer
+				this._shootTimer = 0f;
+			}
 		}
 
-		// Check for input to change the currently selected shape
-		if (Input.GetButtonDown("Fire1") || this._isBot) {
-			this.ChangeShape();
+		// Check if the bullet is in the air
+		if (Input.GetButtonDown("Fire1") && this._generatedBlocks.Count > 0) {
+			// Rotate the shape continuously
+			this.RotateShape();
+		}
+
+		if (this._characterController.IsSmashing) {
+			// Character is smashing, so we wait until it stops before restarting the shoot timer
+			_ = this.StartCoroutine(this.WaitForSmashToEnd());
 		}
 	}
+
+	private IEnumerator WaitForBulletToDestroyCoroutine() {
+		yield return new WaitUntil(() => this._generatedBlocks.Count > 0);
+		yield return new WaitUntil(() => this._generatedBlocks.Count == 0);
+		this._shootTimer = 0f; // Reset the shoot timer after the bullet is destroyed
+	}
+
+	private IEnumerator WaitForSmashToEnd() {
+		while (this._characterController.IsSmashing) {
+			yield return null;
+		}
+
+		// Character has stopped smashing, so we restart the shoot timer
+		this._shootTimer = 0f;
+	}
+
 #pragma warning restore IDE0051 // private member is unused.
 	#endregion
 
