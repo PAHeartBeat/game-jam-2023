@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -19,9 +20,11 @@ public class TetrisShapeShooter : MonoBehaviour, IShapeShooter {
 #pragma warning restore IDE0044 // Make field readonly
 
 	private float _shootTimer = 0f;               // Timer for shooting shapes
-	private int _currentShapeIndex = 0;           // Index of the currently selected shape
+	public int _currentShapeIndex = 0;           // Index of the currently selected shape
 	[SerializeField] private int _botPercentageOfMakingRightDecision = 60;
 
+	public static Action<int> onShapeChange;
+	
 	public void RemoveBlockFromCache(BlockController obj) {
 		if (this._generatedBlocks.Contains(obj)) {
 			_ = this._generatedBlocks.Remove(obj);
@@ -31,7 +34,7 @@ public class TetrisShapeShooter : MonoBehaviour, IShapeShooter {
 	public void ChangeShape() {
 
 		if (_isBot) {
-			var decisionIndex = Random.Range(0, 100);
+			var decisionIndex =UnityEngine.Random.Range(0, 100);
 			if (decisionIndex < _botPercentageOfMakingRightDecision) {
 				return;
 			}
@@ -45,17 +48,23 @@ public class TetrisShapeShooter : MonoBehaviour, IShapeShooter {
 			this._currentShapeIndex = 0;
 		}
 
+		if (!_isBot) {
+			onShapeChange?.Invoke(_currentShapeIndex);
+			AudioManager.Instance.PlaySFX("bottle-clink-101000");
+		}
+
 		// Print the selected shape index
 		Debug.Log("Selected Shape Index: " + this._currentShapeIndex);
 	}
 
 	public void GetRandomShape() {
-		var randomIndex = Random.Range(0, this._blocks.Length);
+		var randomIndex =UnityEngine.Random.Range(0, this._blocks.Length);
 		if (randomIndex < 0 || randomIndex >= this._blocks.Length) {
 			return;
 		}
 		this._currentShapeIndex = randomIndex;
-
+		if (!_isBot)
+			onShapeChange?.Invoke(_currentShapeIndex);
 		// Print the selected shape index
 		Debug.Log("Selected Shape Index: " + this._currentShapeIndex);
 	}
@@ -80,6 +89,7 @@ public class TetrisShapeShooter : MonoBehaviour, IShapeShooter {
 
 		// Apply a force to shoot the shape
 		block.AddForce(this._characterController.BulletInitPoint.forward * this._shootForce, ForceMode.Impulse);
+		AudioManager.Instance.PlaySFX("cannonball-89596 - Selected");
 
 		// Apply recoil to the player
 		// this._characterController.ApplyRecoil();
@@ -87,15 +97,18 @@ public class TetrisShapeShooter : MonoBehaviour, IShapeShooter {
 		// Disable Shooting while recoil Happens.
 		this.DisableShooting();
 
-		this.GetRandomShape();
+		//this.GetRandomShape();
 	}
 
 	public void RotateShape() {
 		if (_isBot) {
-			var decisionIndex = Random.Range(0, 100);
+			var decisionIndex =UnityEngine.Random.Range(0, 100);
 			if (decisionIndex < _botPercentageOfMakingRightDecision) {
 				return;
 			}
+		}
+		if (!_isBot) {
+			AudioManager.Instance.PlaySFX("clock-close-mic-38567 (mp3cut.net)");
 		}
 		for (int i = 0; i < this._generatedBlocks.Count; i++) {
 			this._generatedBlocks[i].RotateShape();
@@ -105,6 +118,8 @@ public class TetrisShapeShooter : MonoBehaviour, IShapeShooter {
 	#region  Mono Action
 #pragma warning disable IDE0051 // private member is unused.
 	void Start() {
+		this._originalScale = this.cannonThread.transform.localScale;
+
 		this._generatedBlocks = new();
 		var dummy = GameObject.Find("ShapeParent");
 		if (null != dummy) {
@@ -114,29 +129,66 @@ public class TetrisShapeShooter : MonoBehaviour, IShapeShooter {
 		this.GetRandomShape();
 	}
 
+	public GameObject cannonThread; // Public reference to the cannon thread object
+
+	private Vector3 _originalScale; // Store the original scale of the cannon thread
+
 	private void Update() {
-		if (!this._characterController.IsActive || this._characterController.IsSmashing)
+		if (!this._characterController.IsActive)
 			return;
 
-		// Update the shoot timer
-		this._shootTimer += Time.smoothDeltaTime;
-
-		// Check if it's time to shoot a shape
-		if (this._shootTimer >= this._shootInterval) {
-			// Shoot a random Tetris shape
-			if (this._canUseGun) {
-				this.ShootShape();
+		if (this._generatedBlocks.Count == 0) {
+			// Check for input to change the currently selected shape
+			if (Input.GetButtonDown("Fire1") || this._isBot) {
+				this.ChangeShape();
 			}
 
-			// Reset the shoot timer
-			this._shootTimer = 0f;
+			// Update the shoot timer
+			this._shootTimer += Time.smoothDeltaTime;
+
+			// Check if it's time to shoot a shape
+			if (this._shootTimer >= this._shootInterval) {
+				// Shoot a random Tetris shape if no hurdle is near
+				if (this._canUseGun && !_characterController.IsHurdleNear()) {
+					// Shoot the shape
+					this.ShootShape();
+					StartCoroutine(WaitForBulletToDestroyCoroutine());
+				} else {
+					Debug.LogError("Hurdle is near");
+				}
+
+				// Reset the shoot timer
+				this._shootTimer = 0f;
+			}
 		}
 
-		// Check for input to change the currently selected shape
-		if (Input.GetButtonDown("Fire1") || this._isBot) {
-			this.ChangeShape();
+		// Check if the bullet is in the air
+		if (Input.GetButtonDown("Fire1") && this._generatedBlocks.Count > 0) {
+			// Rotate the shape continuously
+			this.RotateShape();
+		}
+
+		if (this._characterController.IsSmashing) {
+			// Character is smashing, so we wait until it stops before restarting the shoot timer
+			_ = this.StartCoroutine(this.WaitForSmashToEnd());
 		}
 	}
+
+	private IEnumerator WaitForBulletToDestroyCoroutine() {
+		yield return new WaitUntil(() => this._generatedBlocks.Count > 0);
+		yield return new WaitUntil(() => this._generatedBlocks.Count == 0);
+		this._shootTimer = 0f; // Reset the shoot timer after the bullet is destroyed
+	}
+
+	private IEnumerator WaitForSmashToEnd() {
+		while (this._characterController.IsSmashing) {
+			yield return null;
+		}
+
+		// Character has stopped smashing, so we restart the shoot timer
+		this._shootTimer = 0f;
+	}
+
 #pragma warning restore IDE0051 // private member is unused.
 	#endregion
 

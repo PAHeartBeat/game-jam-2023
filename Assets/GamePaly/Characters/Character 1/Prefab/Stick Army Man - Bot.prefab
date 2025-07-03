@@ -124,6 +124,14 @@ PrefabInstance:
       propertyPath: m_Name
       value: Stick Army Man - Bot
       objectReference: {fileID: 0}
+    - target: {fileID: 7481060925748798811, guid: 96781c5edec439f43994615013b93a77, type: 3}
+      propertyPath: m_Materials.Array.data[0]
+      value: 
+      objectReference: {fileID: 2100000, guid: 83ebee88712b54f40b3c0c6d524d3223, type: 2}
+    - target: {fileID: 8370791400579675263, guid: 96781c5edec439f43994615013b93a77, type: 3}
+      propertyPath: m_Materials.Array.data[0]
+      value: 
+      objectReference: {fileID: 2100000, guid: 265c020db2f92c34983f04cc089539ff, type: 2}
     - target: {fileID: 8583262598626965211, guid: 96781c5edec439f43994615013b93a77, type: 3}
       propertyPath: isBot
       value: 1
@@ -133,9 +141,29 @@ PrefabInstance:
       value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 8583262598626965211, guid: 96781c5edec439f43994615013b93a77, type: 3}
+      propertyPath: cannonThread
+      value: 
+      objectReference: {fileID: 5671016537989920907}
+    - target: {fileID: 8583262598626965211, guid: 96781c5edec439f43994615013b93a77, type: 3}
+      propertyPath: _blocks.Array.size
+      value: 6
+      objectReference: {fileID: 0}
+    - target: {fileID: 8583262598626965211, guid: 96781c5edec439f43994615013b93a77, type: 3}
       propertyPath: _characterController
       value: 
       objectReference: {fileID: 8446212589050166459}
+    - target: {fileID: 8583262598626965211, guid: 96781c5edec439f43994615013b93a77, type: 3}
+      propertyPath: _blocks.Array.data[3]
+      value: 
+      objectReference: {fileID: 5547921773078892908, guid: 3fcaca80b8cc5fb4194f6c6f10380304, type: 3}
+    - target: {fileID: 8583262598626965211, guid: 96781c5edec439f43994615013b93a77, type: 3}
+      propertyPath: _blocks.Array.data[4]
+      value: 
+      objectReference: {fileID: 5547921773078892908, guid: f1b6241c0b1f11340a28055d6986ea20, type: 3}
+    - target: {fileID: 8583262598626965211, guid: 96781c5edec439f43994615013b93a77, type: 3}
+      propertyPath: _blocks.Array.data[5]
+      value: 
+      objectReference: {fileID: 5547921773078892908, guid: c6bbae06ce4fcba4b82866a1dc7fbd95, type: 3}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 96781c5edec439f43994615013b93a77, type: 3}
 --- !u!1 &2966236898060529774 stripped
@@ -160,6 +188,11 @@ MeshCollider:
 --- !u!4 &4858961304974265575 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 7587054969343661408, guid: 96781c5edec439f43994615013b93a77, type: 3}
+  m_PrefabInstance: {fileID: 3036795984967063943}
+  m_PrefabAsset: {fileID: 0}
+--- !u!1 &5671016537989920907 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 7248440956524585228, guid: 96781c5edec439f43994615013b93a77, type: 3}
   m_PrefabInstance: {fileID: 3036795984967063943}
   m_PrefabAsset: {fileID: 0}
 --- !u!95 &6129962814996205768 stripped

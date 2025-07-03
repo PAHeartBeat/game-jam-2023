@@ -1,12 +1,13 @@
 using UnityEngine;
 using UnityEngine.EventSystems;
 
-public class ShapesPickHandler : MonoBehaviour, IDragHandler, IEndDragHandler
-{
-	public Vector3 dragOffset; // Offset to apply when dragging
-
+public class ShapesPickHandler : MonoBehaviour, IDragHandler, IEndDragHandler {
+	public Camera mainCamera;
+	
 	public void OnDrag(PointerEventData eventData) {
-		transform.localPosition = Input.mousePosition + dragOffset;
+		Vector3 mousePosition = Input.mousePosition;
+		mousePosition.z = Vector3.Distance(transform.position, mainCamera.transform.position);
+		transform.position = mainCamera.ScreenToWorldPoint(mousePosition);
 	}
 
 	public void OnEndDrag(PointerEventData eventData) {

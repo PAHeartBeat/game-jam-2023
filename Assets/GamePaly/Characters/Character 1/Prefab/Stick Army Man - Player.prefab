@@ -160,14 +160,39 @@ PrefabInstance:
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 8583262598626965211, guid: 96781c5edec439f43994615013b93a77, type: 3}
+      propertyPath: cannonThread
+      value: 
+      objectReference: {fileID: 653642843950254234}
+    - target: {fileID: 8583262598626965211, guid: 96781c5edec439f43994615013b93a77, type: 3}
+      propertyPath: _blocks.Array.size
+      value: 6
+      objectReference: {fileID: 0}
+    - target: {fileID: 8583262598626965211, guid: 96781c5edec439f43994615013b93a77, type: 3}
       propertyPath: _characterController
       value: 
       objectReference: {fileID: 1686924786748242267}
+    - target: {fileID: 8583262598626965211, guid: 96781c5edec439f43994615013b93a77, type: 3}
+      propertyPath: _blocks.Array.data[3]
+      value: 
+      objectReference: {fileID: 5547921773078892908, guid: 3fcaca80b8cc5fb4194f6c6f10380304, type: 3}
+    - target: {fileID: 8583262598626965211, guid: 96781c5edec439f43994615013b93a77, type: 3}
+      propertyPath: _blocks.Array.data[4]
+      value: 
+      objectReference: {fileID: 5547921773078892908, guid: f1b6241c0b1f11340a28055d6986ea20, type: 3}
+    - target: {fileID: 8583262598626965211, guid: 96781c5edec439f43994615013b93a77, type: 3}
+      propertyPath: _blocks.Array.data[5]
+      value: 
+      objectReference: {fileID: 5547921773078892908, guid: c6bbae06ce4fcba4b82866a1dc7fbd95, type: 3}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 96781c5edec439f43994615013b93a77, type: 3}
 --- !u!4 &346553259726257398 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 7587054969343661408, guid: 96781c5edec439f43994615013b93a77, type: 3}
+  m_PrefabInstance: {fileID: 7891878923786250646}
+  m_PrefabAsset: {fileID: 0}
+--- !u!1 &653642843950254234 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 7248440956524585228, guid: 96781c5edec439f43994615013b93a77, type: 3}
   m_PrefabInstance: {fileID: 7891878923786250646}
   m_PrefabAsset: {fileID: 0}
 --- !u!95 &1347503698453160153 stripped
